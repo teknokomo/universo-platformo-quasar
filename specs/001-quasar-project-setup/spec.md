@@ -121,8 +121,17 @@ A developer sets up their local development environment with necessary tools and
 - **FR-013**: Repository MUST follow GitHub Issues guidelines with bilingual format using exact spoiler tag `<summary>In Russian</summary>`
 - **FR-014**: Repository MUST create initial label set per github-labels.md as part of setup, then use only existing repository labels for future issues
 - **FR-015**: Repository MUST follow GitHub PR guidelines with bilingual descriptions and proper labeling
-- **FR-016**: Repository MUST follow i18n documentation guidelines ensuring English and Russian versions have identical structure
-- **FR-017**: Repository MUST establish process for monitoring React implementation for new features and evaluating them for Quasar/NestJS adaptation
+- **FR-016**: Repository MUST follow i18n documentation guidelines ensuring English and Russian versions have identical structure, with English documentation created first as primary source, then Russian as exact translation
+- **FR-017**: Repository MUST use Quasar Framework for frontend, NestJS for backend, TypeScript for all code, and PNPM for package management as the mandatory technology stack
+- **FR-018**: Repository MUST use Supabase as primary database with architecture designed to support future expansion to other DBMS
+- **FR-019**: Repository MUST use Passport.js with Supabase connector strategy for authentication implementation
+- **FR-020**: Repository MUST follow Quasar and NestJS framework best practices, avoiding direct porting of implementation patterns from React/Express version that don't align with these frameworks' conventions
+- **FR-021**: Repository MUST exclude docs/ directory from project structure (documentation will be maintained in separate repository)
+- **FR-022**: Repository MUST NOT include pre-created AI agent configuration files in .github/agents or similar locations (users create these as needed for their workflow)
+- **FR-023**: Repository development MUST follow phased approach: (Phase 1) Repository setup and documentation, (Phase 2) Base package structure creation, (Phase 3) First functional feature implementation (Clusters pattern), (Phase 4) Pattern replication to other features
+- **FR-024**: Repository MUST establish React repository monitoring process with defined frequency (bi-weekly review of React implementation commits) and explicit criteria for feature porting decisions (feature stability, alignment with Quasar/NestJS patterns, absence of Flowise legacy code)
+- **FR-025**: GitHub workflow MUST require Issue creation before starting specification work for any new feature or significant change
+- **FR-026**: Repository MUST document environment setup requirements including Supabase connection configuration, authentication setup, and local development environment preparation
 
 ### Key Entities
 
@@ -147,19 +156,106 @@ A developer sets up their local development environment with necessary tools and
 - **SC-008**: Package structure supports future addition of new packages following the established patterns
 - **SC-009**: All GitHub Issues created follow the bilingual format with exact spoiler tag formatting
 - **SC-010**: Repository labels are properly configured and used according to the labeling guidelines (initial set created during setup)
-- **SC-011**: Documentation clearly explains React repository monitoring process and selective feature porting strategy
+- **SC-011**: Documentation clearly explains React repository monitoring process (bi-weekly reviews) and selective feature porting strategy with 4 explicit criteria
+- **SC-012**: Repository documentation explicitly states technology stack requirements (Quasar, NestJS, TypeScript, PNPM) in requirements or setup guide
+- **SC-013**: Documentation includes environment setup instructions covering Supabase configuration and Passport.js authentication setup
+- **SC-014**: Repository structure explicitly excludes docs/ directory with explanation about separate documentation repository
+- **SC-015**: No AI agent configuration files exist in repository at setup; documentation notes these are user-created
+- **SC-016**: Development phases (repository setup → base structure → Clusters → replication) are clearly documented in specification or project documentation
+- **SC-017**: Package structure documentation explains both dual-package scenario (-frt + -srv) and single-package scenario (one suffix only)
+
+## Development Workflow & Sequencing *(optional)*
+
+### Phased Development Approach
+
+The project follows a structured, sequential development approach to ensure solid foundation before adding complexity:
+
+**Phase 1: Repository Foundation** (Priority: P1)
+- Initialize repository with proper configuration files
+- Create bilingual README documentation
+- Set up PNPM workspace structure
+- Configure TypeScript, ESLint, Prettier
+- Establish GitHub Issues labels and templates
+- Document license information (Omsk Open License)
+
+**Phase 2: Base Package Structure** (Priority: P2-P3)
+- Create packages/ directory structure
+- Define package naming conventions (-frt/-srv suffixes)
+- Implement base/ directory pattern in each package
+- Set up cross-package TypeScript references
+- Establish package dependency patterns
+
+**Phase 3: First Functional Feature - Clusters Pattern** (Future Specification)
+- Implement three-entity hierarchy: Clusters → Domains → Resources
+- Create separate packages: clusters-frt (Quasar) and clusters-srv (NestJS)
+- Establish CRUD operations pattern
+- Set up Supabase integration pattern
+- Implement Passport.js authentication flow
+- This pattern becomes the template for replication
+
+**Phase 4: Pattern Replication to Other Features** (Future Specifications)
+- Metaverses feature: Metaverses → Sections → Entities (similar structure)
+- Uniques feature: Multiple entity levels (extended pattern)
+- Additional features: Spaces/Canvases with LangChain graph nodes, UPDL-nodes
+- Each feature follows established patterns with feature-specific additions
+
+### React Repository Monitoring Process
+
+**Monitoring Frequency**: Bi-weekly review of React implementation commits
+
+**Review Criteria**: For each new feature or change in React version, evaluate:
+1. **Stability**: Has the feature been tested and stable in React version for at least 2 weeks?
+2. **Pattern Alignment**: Can it be implemented following Quasar/NestJS best practices?
+3. **Code Quality**: Is it free of Flowise legacy code and well-implemented?
+4. **Value Proposition**: Does it provide clear value for Quasar implementation users?
+
+**Decision Process**:
+- Feature meets all 4 criteria → Create specification for Quasar adaptation
+- Feature fails any criterion → Document decision to skip with rationale
+- Unclear cases → Discuss with maintainers before deciding
+
+**Exclusions** (Never Port):
+- Flowise AI legacy code or patterns
+- docs/ directory content (separate documentation repository)
+- AI agent configurations (user-created)
+- React/Express specific implementation patterns that conflict with Quasar/NestJS conventions
+
+### Issue-First Development Workflow
+
+**Before any specification work**:
+1. Create GitHub Issue following `.github/instructions/github-issues.md`
+2. Include bilingual description (English + Russian in spoiler)
+3. Apply appropriate labels per `.github/instructions/github-labels.md`
+4. Reference related issues if applicable
+
+**During feature development**:
+1. Create feature branch with issue number prefix
+2. Write specification following `.specify/templates/spec-template.md`
+3. Implement following planned tasks
+4. Maintain bilingual documentation (English first, then Russian)
+5. Create PR per `.github/instructions/github-pr.md` with `Fixes #N` reference
+
+This workflow ensures traceability and proper documentation for all changes.
 
 ## Assumptions
 
 - Developers have basic familiarity with monorepo concepts and PNPM workspaces
 - The Quasar framework and NestJS are chosen as the technology stack (no alternatives being considered)
-- Supabase will be used for database functionality similar to the React implementation
-- The project will use TypeScript exclusively for both frontend and backend
-- Quasar's built-in Material Design components will be used for UI consistency (not a separate MUI package)
-- The project structure follows the React implementation conceptually but not at the code level
+- Supabase will be used for database functionality with architecture designed for future DBMS expansion
+- The project will use TypeScript exclusively for both frontend and backend with strict mode enabled
+- Quasar's built-in Material Design components will be used for UI consistency (not a separate @mui/material package)
+- The project structure follows the React implementation conceptually but not at the code level - implementation patterns must follow Quasar/NestJS best practices
 - The React implementation (github.com/teknokomo/universo-platformo-react) contains Flowise legacy code that will NOT be ported
-- React repository will be monitored regularly for new proven features worth adapting to Quasar/NestJS stack
-- GitHub Issues and Pull Requests will be the primary tools for task management
-- Documentation will be maintained in both English and Russian languages only (not additional languages initially)
-- The Omsk Open License applies to new code (detailed license terms to be established), while dependencies and packages may have different licenses
-- Initial repository setup includes creating base label set; afterwards only existing labels are used
+- React repository will be monitored bi-weekly for new proven features worth adapting to Quasar/NestJS stack
+- Feature porting from React requires: (a) feature stability in React version, (b) alignment with Quasar/NestJS patterns, (c) absence of Flowise legacy code, (d) clear value for Quasar implementation
+- GitHub Issues and Pull Requests will be the primary tools for task management, with Issue creation required before specification work
+- Documentation will be maintained in both English and Russian languages only (not additional languages initially), with English created first as primary source
+- The Omsk Open License applies to new code (detailed license terms to be established), while dependencies and packages may have their own licenses that must be documented
+- Initial repository setup includes creating base label set per github-labels.md; afterwards only existing labels are used
+- The docs/ directory is deliberately excluded from this repository (will be maintained in separate documentation repository in future)
+- AI agent configuration files are not pre-created; users create them as needed for their specific workflow
+- Development follows phased approach: repository setup → base structure → first feature (Clusters pattern with 3-entity hierarchy) → pattern replication
+- Clusters functionality will establish the base three-entity pattern (Clusters/Domains/Resources) that will be replicated for other features (Metaverses/Sections/Entities, etc.)
+- Package structure supports scenarios where: (a) functionality needs both frontend and backend (use -frt and -srv packages), (b) functionality needs only one side (use single package with appropriate suffix)
+- Code review and approval process will be established during initial repository setup but specifics are deferred to governance documentation
+- Future features like Spaces/Canvases, LangChain graph nodes, and UPDL-nodes are acknowledged but specifications are deferred to separate feature specs
