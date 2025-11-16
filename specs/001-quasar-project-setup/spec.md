@@ -18,8 +18,8 @@ A developer clones the Universo Platformo Quasar repository and finds comprehens
 **Acceptance Scenarios**:
 
 1. **Given** an empty repository, **When** the setup is complete, **Then** README.md and README-RU.md exist with identical structure and bilingual content
-2. **Given** the repository is cloned, **When** a developer opens it, **Then** they can understand the project's purpose, architecture, and relationship to Universo Platformo React
-3. **Given** the repository documentation, **When** a developer reads the license information, **Then** they understand the Omsk Open License terms and individual package licensing
+2. **Given** the repository is cloned, **When** a developer opens it, **Then** they can understand the project's purpose, architecture, and relationship to Universo Platformo React (including that React version has Flowise legacy code and other Universo implementations exist)
+3. **Given** the repository documentation, **When** a developer reads the license information, **Then** they understand the Omsk Open License application and individual package licensing
 4. **Given** configuration files exist, **When** validated, **Then** they include proper TypeScript, ESLint, Prettier, and gitignore settings
 
 ---
@@ -98,6 +98,9 @@ A developer sets up their local development environment with necessary tools and
 - How does the system handle when README.md is updated but README-RU.md is not? (Development guidelines should require both to be updated together)
 - What happens if package naming conventions are not followed? (Linting and documentation should catch this during code review)
 - How does the system handle dependencies that conflict between Quasar and NestJS? (PNPM workspace configuration should isolate dependencies appropriately)
+- What happens if someone tries to add actual @mui/material package? (Documentation should clarify Quasar's Material Design components are used instead)
+- How is React repository monitoring coordinated? (Should establish regular review schedule and decision criteria for porting features)
+- What if Flowise-related code is accidentally ported from React? (Code review should catch and reject such changes)
 
 ## Requirements *(mandatory)*
 
@@ -111,21 +114,24 @@ A developer sets up their local development environment with necessary tools and
 - **FR-006**: Repository MUST include proper TypeScript configuration for both Quasar and NestJS development
 - **FR-007**: Repository MUST include ESLint and Prettier configuration for code quality and consistency
 - **FR-008**: Repository MUST include comprehensive .gitignore for Node.js, TypeScript, and IDE files
-- **FR-009**: Documentation MUST reference Universo Platformo React as the conceptual basis while noting this is a Quasar/NestJS implementation
-- **FR-010**: Repository MUST include license information stating Omsk Open License with notes about individual packages
+- **FR-009**: Documentation MUST reference Universo Platformo React as the conceptual basis while noting this is a Quasar/NestJS implementation and that React version contains Flowise legacy code not to be ported
+- **FR-010**: Repository MUST include license information stating Omsk Open License (with detailed terms to be established) and notes about individual package licenses
 - **FR-011**: Repository MUST include proper package.json with workspace configuration and engine requirements
 - **FR-012**: Documentation MUST explain the relationship to other Universo Platformo implementations (React, Godot, PlayCanvas)
 - **FR-013**: Repository MUST follow GitHub Issues guidelines with bilingual format using exact spoiler tag `<summary>In Russian</summary>`
-- **FR-014**: Repository MUST follow GitHub Labels guidelines using only existing repository labels
+- **FR-014**: Repository MUST create initial label set per github-labels.md as part of setup, then use only existing repository labels for future issues
 - **FR-015**: Repository MUST follow GitHub PR guidelines with bilingual descriptions and proper labeling
 - **FR-016**: Repository MUST follow i18n documentation guidelines ensuring English and Russian versions have identical structure
+- **FR-017**: Repository MUST establish process for monitoring React implementation for new features and evaluating them for Quasar/NestJS adaptation
 
 ### Key Entities
 
 - **Repository Configuration**: Represents the foundational setup including package.json, pnpm-workspace.yaml, tsconfig.json, and other configuration files
-- **Package**: Represents a functional module with either -frt (frontend) or -srv (backend) suffix, containing a base/ directory
-- **Documentation**: Represents bilingual README files and other documentation following i18n guidelines
-- **Issue Label**: Represents categorization tags used in GitHub Issues following the repository's labeling system
+- **Package**: Represents a functional module with either -frt (frontend using Quasar) or -srv (backend using NestJS) suffix, containing a base/ directory for core implementation
+- **Documentation**: Represents bilingual README files and other documentation following i18n guidelines with exact structural parity
+- **Issue Label**: Represents categorization tags used in GitHub Issues following the repository's labeling system (initial set created during setup)
+- **License Information**: Represents Omsk Open License application and individual package license documentation
+- **React Repository Reference**: Represents the conceptual basis and monitoring source for feature evaluation (excluding Flowise legacy code)
 
 ## Success Criteria *(mandatory)*
 
@@ -135,12 +141,13 @@ A developer sets up their local development environment with necessary tools and
 - **SC-002**: Running `pnpm install` successfully installs all dependencies without errors
 - **SC-003**: Both README.md and README-RU.md have exactly the same number of lines and section structure
 - **SC-004**: All configuration files are valid and can be successfully used by development tools without errors
-- **SC-005**: The repository structure clearly mirrors the React implementation's organization with appropriate technology substitutions
+- **SC-005**: The repository structure clearly mirrors the React implementation's organization with appropriate technology substitutions (Quasar Material Design components, NestJS backend)
 - **SC-006**: Documentation references are accurate and all mentioned files exist in the repository
-- **SC-007**: License information is clearly stated and matches the React implementation's licensing approach
+- **SC-007**: License information clearly states Omsk Open License application with note about establishing detailed terms
 - **SC-008**: Package structure supports future addition of new packages following the established patterns
 - **SC-009**: All GitHub Issues created follow the bilingual format with exact spoiler tag formatting
-- **SC-010**: Repository labels are properly configured and used according to the labeling guidelines
+- **SC-010**: Repository labels are properly configured and used according to the labeling guidelines (initial set created during setup)
+- **SC-011**: Documentation clearly explains React repository monitoring process and selective feature porting strategy
 
 ## Assumptions
 
@@ -148,8 +155,11 @@ A developer sets up their local development environment with necessary tools and
 - The Quasar framework and NestJS are chosen as the technology stack (no alternatives being considered)
 - Supabase will be used for database functionality similar to the React implementation
 - The project will use TypeScript exclusively for both frontend and backend
-- Material UI patterns will be adapted through Quasar's component library
+- Quasar's built-in Material Design components will be used for UI consistency (not a separate MUI package)
 - The project structure follows the React implementation conceptually but not at the code level
+- The React implementation (github.com/teknokomo/universo-platformo-react) contains Flowise legacy code that will NOT be ported
+- React repository will be monitored regularly for new proven features worth adapting to Quasar/NestJS stack
 - GitHub Issues and Pull Requests will be the primary tools for task management
 - Documentation will be maintained in both English and Russian languages only (not additional languages initially)
-- The Omsk Open License applies to new code, while dependencies and packages may have different licenses
+- The Omsk Open License applies to new code (detailed license terms to be established), while dependencies and packages may have different licenses
+- Initial repository setup includes creating base label set; afterwards only existing labels are used
