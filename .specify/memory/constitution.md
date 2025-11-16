@@ -31,6 +31,16 @@ Notes:
 
 # Universo Platformo Quasar Constitution
 
+## Project Context
+
+This project is the **Quasar/NestJS implementation** of Universo Platformo, part of a multi-technology ecosystem. Universo Platformo has multiple parallel implementations:
+- **React/Express** (reference implementation at github.com/teknokomo/universo-platformo-react)
+- **Quasar/NestJS** (this project)
+- **Godot** (game engine implementation)
+- **PlayCanvas** (web 3D implementation)
+
+Each implementation shares the same architectural principles but uses different technology stacks. The React implementation serves as the conceptual reference, while this Quasar implementation focuses on production-grade TypeScript development with Quasar Framework and NestJS.
+
 ## Core Principles
 
 ### I. Monorepo Package Structure
@@ -58,12 +68,12 @@ All code MUST be written in TypeScript for both frontend and backend. No JavaScr
 The project MUST use the following core technologies following their best practices:
 - **Frontend**: Quasar Framework for UI components and application structure
 - **Backend**: NestJS for API services and business logic
-- **UI Library**: Material UI (MUI) for consistent design components
+- **UI Library**: Quasar's built-in Material Design components for consistent design
 - **Authentication**: Passport.js with Supabase connector
 - **Database**: Supabase as primary (extensible to other DBMS in future)
 - **Package Manager**: PNPM for workspace and dependency management
 
-**Rationale**: These technologies were selected for their maturity, community support, and alignment with TypeScript development. They provide a solid foundation different from the React/Express stack while maintaining consistency with Universo Platformo architectural principles.
+**Rationale**: These technologies were selected for their maturity, community support, and alignment with TypeScript development. Quasar provides comprehensive Material Design components out of the box, eliminating the need for separate UI libraries. They provide a solid foundation different from the React/Express stack while maintaining consistency with Universo Platformo architectural principles.
 
 ### IV. Bilingual Documentation (NON-NEGOTIABLE)
 
@@ -104,10 +114,12 @@ The project MUST avoid legacy patterns from Universo Platformo React:
 - Do NOT create `docs/` directory (will be separate repository)
 - Do NOT create AI agent configuration files (user creates as needed)
 - Do NOT port unfinished or poorly implemented code from React version
+- Do NOT port Flowise legacy code from React version (the React version contains partially rewritten Flowise code that should not be ported)
 - Follow Quasar and NestJS best practices for the current stack
 - Prioritize clean, maintainable code over feature parity with React version
+- Monitor React repository regularly to identify new features worth porting, but evaluate each feature for quality and fit
 
-**Rationale**: This is an opportunity to implement Universo Platformo concepts correctly using modern frameworks. We learn from the React version's architecture but implement with Quasar/NestJS best practices, avoiding technical debt from the beginning.
+**Rationale**: This is an opportunity to implement Universo Platformo concepts correctly using modern frameworks. The React version is based on Flowise AI and still contains legacy code being gradually rewritten. We learn from the React version's architecture and selectively port proven features, but implement with Quasar/NestJS best practices, avoiding technical debt from the beginning.
 
 ## Technology Stack
 
@@ -117,7 +129,7 @@ The project MUST avoid legacy patterns from Universo Platformo React:
 - **Backend Framework**: NestJS (latest stable)
 - **Language**: TypeScript (strict mode enabled)
 - **Package Manager**: PNPM (workspace configuration)
-- **UI Components**: Material UI (MUI)
+- **UI Components**: Quasar's built-in Material Design components
 - **Authentication**: Passport.js with Supabase strategy
 - **Primary Database**: Supabase (PostgreSQL-based)
 - **Version Control**: Git with GitHub
@@ -189,6 +201,15 @@ This constitution supersedes all other development practices and guidelines for 
 - Violations MUST be justified in PR description with rationale
 - Template compliance checks MUST reference current constitution version
 - Regular constitution reviews SHOULD occur quarterly or when major features planned
+
+### Licensing
+
+This project follows the **Omsk Open License** as stated in the reference React implementation. The license emphasizes:
+- New code developed for this project is under Omsk Open License
+- Individual packages and dependencies may have their own licenses
+- Package-level license information MUST be clearly documented
+
+**Note**: The Omsk Open License is referenced in the React implementation. Detailed license text and terms should be established and documented in this repository's LICENSE file during initial repository setup.
 
 ### Related Guidance
 
