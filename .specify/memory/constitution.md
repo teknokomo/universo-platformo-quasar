@@ -1,50 +1,200 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report (2025-11-16)
+================================
+Version: 0.0.0 → 1.0.0 (MAJOR - Initial ratification)
+
+Modified Principles:
+- All principles: Initial definition
+
+Added Sections:
+- Core Principles (7 principles)
+- Technology Stack
+- Development Workflow
+- Governance
+
+Removed Sections:
+- None (initial version)
+
+Templates Status:
+✅ .specify/templates/plan-template.md - Reviewed, no updates needed
+✅ .specify/templates/spec-template.md - Reviewed, no updates needed
+✅ .specify/templates/tasks-template.md - Reviewed, no updates needed
+
+Follow-up TODOs:
+- None
+
+Notes:
+- Initial constitution ratification for Universo Platformo Quasar project
+- Based on requirements from GitHub issue for Quasar/NestJS implementation
+- Aligned with existing .github/instructions guidelines
+-->
+
+# Universo Platformo Quasar Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Monorepo Package Structure
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+All functionality MUST be organized in a monorepo using PNPM workspace management. Packages MUST be placed in `packages/` directory with clear separation:
+- Frontend packages use `-frt` suffix (e.g., `packages/clusters-frt`)
+- Backend packages use `-srv` suffix (e.g., `packages/clusters-srv`)
+- Each package MUST contain a `base/` root directory to support multiple future implementations
+- Packages MUST be self-contained with clear dependencies
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+**Rationale**: This structure enables modular development, allows for technology stack variations, and supports the future migration of packages to separate repositories while maintaining the base implementation pattern established in Universo Platformo React.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### II. TypeScript-First Development
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+All code MUST be written in TypeScript for both frontend and backend. No JavaScript exceptions permitted except for configuration files where absolutely necessary.
+- Type safety MUST be enforced with strict TypeScript compiler options
+- Type definitions MUST be explicit and comprehensive
+- Shared types MUST be defined in dedicated packages to ensure consistency
+- Any type assertions MUST be justified with comments
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+**Rationale**: TypeScript provides type safety, better IDE support, and improved maintainability across the Quasar frontend and NestJS backend, preventing runtime errors and enabling confident refactoring.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### III. Technology Stack Adherence
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+The project MUST use the following core technologies following their best practices:
+- **Frontend**: Quasar Framework for UI components and application structure
+- **Backend**: NestJS for API services and business logic
+- **UI Library**: Material UI (MUI) for consistent design components
+- **Authentication**: Passport.js with Supabase connector
+- **Database**: Supabase as primary (extensible to other DBMS in future)
+- **Package Manager**: PNPM for workspace and dependency management
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+**Rationale**: These technologies were selected for their maturity, community support, and alignment with TypeScript development. They provide a solid foundation different from the React/Express stack while maintaining consistency with Universo Platformo architectural principles.
+
+### IV. Bilingual Documentation (NON-NEGOTIABLE)
+
+All documentation MUST be created in both English and Russian:
+- English documentation is the PRIMARY and MUST be created first
+- Russian documentation MUST be an exact translation with identical structure and line count
+- Files MUST follow naming convention: `README.md` (English), `README-RU.md` (Russian)
+- Both versions MUST be updated together - no version can be outdated
+- Content verification MUST confirm identical structure and line count
+
+**Rationale**: This project serves a bilingual user base. Maintaining exact structural parity ensures consistency and prevents information gaps between language versions, supporting effective collaboration across language boundaries.
+
+### V. GitHub Integration Standards
+
+All GitHub interactions MUST follow established guidelines:
+- **Issues**: Created per `.github/instructions/github-issues.md` with English text and Russian translation in `<details><summary>In Russian</summary>` spoiler
+- **Pull Requests**: Created per `.github/instructions/github-pr.md` with GH# prefix and bilingual description
+- **Labels**: Applied per `.github/instructions/github-labels.md` using existing repository labels only
+- Issue MUST be created before starting specification work
+- PR MUST reference the closing issue with `Fixes #123` syntax
+
+**Rationale**: Standardized GitHub workflows ensure traceability, enable automation, maintain bilingual accessibility, and create a clear audit trail for all development activities.
+
+### VI. Incremental Feature Development
+
+Features MUST be developed following the base entity pattern:
+- Start with base structure: three-entity hierarchy (Parent/Child/Resource)
+- Example: Clusters → Domains → Resources
+- Replicate pattern for other features (Metaverses → Sections → Entities)
+- Build foundational CRUD operations before adding specialized functionality
+- Each feature MUST be independently testable before integration
+
+**Rationale**: The three-entity hierarchy provides a proven, repeatable pattern from Universo Platformo React that accelerates development while maintaining consistency. Starting with base functionality enables early validation before investing in complex features.
+
+### VII. Clean Implementation Standards
+
+The project MUST avoid legacy patterns from Universo Platformo React:
+- Do NOT create `docs/` directory (will be separate repository)
+- Do NOT create AI agent configuration files (user creates as needed)
+- Do NOT port unfinished or poorly implemented code from React version
+- Follow Quasar and NestJS best practices for the current stack
+- Prioritize clean, maintainable code over feature parity with React version
+
+**Rationale**: This is an opportunity to implement Universo Platformo concepts correctly using modern frameworks. We learn from the React version's architecture but implement with Quasar/NestJS best practices, avoiding technical debt from the beginning.
+
+## Technology Stack
+
+### Required Technologies
+
+- **Frontend Framework**: Quasar Framework (latest stable)
+- **Backend Framework**: NestJS (latest stable)
+- **Language**: TypeScript (strict mode enabled)
+- **Package Manager**: PNPM (workspace configuration)
+- **UI Components**: Material UI (MUI)
+- **Authentication**: Passport.js with Supabase strategy
+- **Primary Database**: Supabase (PostgreSQL-based)
+- **Version Control**: Git with GitHub
+
+### Architecture Patterns
+
+- Frontend packages MUST use Quasar's modular architecture
+- Backend packages MUST follow NestJS module-based structure
+- Shared types MUST be in dedicated packages accessible to both frontend and backend
+- API communication MUST use RESTful principles with clear contract definitions
+- Database access MUST be abstracted to support future DBMS additions
+
+## Development Workflow
+
+### Feature Development Process
+
+1. **Specification Phase**:
+   - Create GitHub issue per `.github/instructions/github-issues.md`
+   - Apply appropriate labels per `.github/instructions/github-labels.md`
+   - Write specification following `.specify/templates/spec-template.md`
+   - Get specification approval before implementation
+
+2. **Implementation Phase**:
+   - Create feature branch with issue number prefix
+   - Implement following `.specify/templates/tasks-template.md`
+   - Ensure TypeScript strict mode compliance
+   - Follow package structure conventions (base/ directory, -frt/-srv suffixes)
+
+3. **Documentation Phase**:
+   - Create English README.md first
+   - Create Russian README-RU.md as exact translation
+   - Verify identical structure and line count per `.github/instructions/i18n-docs.md`
+   - Update relevant documentation in packages
+
+4. **Review Phase**:
+   - Create Pull Request per `.github/instructions/github-pr.md`
+   - Include bilingual PR description
+   - Reference closing issue
+   - Apply appropriate labels
+   - Address review feedback
+
+### Quality Gates
+
+- All TypeScript code MUST compile without errors or warnings
+- All tests MUST pass before PR merge
+- Both English and Russian documentation MUST be present and verified
+- Code MUST follow Quasar and NestJS best practices
+- No legacy patterns from React version may be merged
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+### Constitution Authority
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+This constitution supersedes all other development practices and guidelines for the Universo Platformo Quasar project. When conflicts arise between this constitution and other documentation, this constitution takes precedence.
+
+### Amendment Process
+
+- Amendments MUST be proposed via GitHub issue
+- Changes MUST be reviewed by project maintainers
+- MAJOR version bump: Backward-incompatible governance changes, principle removals
+- MINOR version bump: New principles added, material expansions to guidance
+- PATCH version bump: Clarifications, wording improvements, non-semantic refinements
+- Amended constitution MUST include sync impact report
+- Dependent templates and documentation MUST be updated consistently
+
+### Compliance
+
+- All pull requests MUST verify compliance with constitution principles
+- Violations MUST be justified in PR description with rationale
+- Template compliance checks MUST reference current constitution version
+- Regular constitution reviews SHOULD occur quarterly or when major features planned
+
+### Related Guidance
+
+For runtime development guidance, refer to:
+- `.github/instructions/` directory for GitHub workflow standards
+- `.specify/templates/` directory for specification and planning templates
+- Package-level README files for implementation-specific guidance
+
+**Version**: 1.0.0 | **Ratified**: 2025-11-16 | **Last Amended**: 2025-11-16
