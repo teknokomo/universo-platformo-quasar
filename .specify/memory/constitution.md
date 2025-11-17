@@ -1,5 +1,49 @@
 <!--
-Sync Impact Report (2025-11-16 - Update 1)
+Sync Impact Report (2025-11-16 - Update 2)
+================================
+Version: 1.1.0 → 1.2.0 (MINOR - Architectural patterns and infrastructure expansion)
+
+Modified Principles:
+- Principle I (Monorepo Package Structure): Added PNPM workspace catalog, Turborepo orchestration, @universo/* namespace for shared packages
+- Principle II (TypeScript-First Development): Added strict mode requirement, centralized types in @universo/types, dual-build mandate for libraries
+- Technology Stack > Required Technologies: Added Turborepo, Vitest, Husky, Docker, lint-staged
+- Technology Stack > Architecture Patterns: Expanded with detailed shared infrastructure packages (@universo/types, utils, i18n, api-client, auth-frt, auth-srv)
+- Development Workflow > Project Development Sequence: Renamed Phase 2 to "Shared Infrastructure" with detailed package list
+- Development Workflow > React Repository Monitoring: Added "Architectural Patterns to Monitor" section with 10 specific patterns
+- Development Workflow > Quality Gates: Added 5 new quality gates (Husky hooks, shared infrastructure usage, README templates, catalog usage, dual-build requirement)
+
+Added Sections:
+- None (expansions to existing sections)
+
+Enhanced Sections:
+- Technology Stack: Comprehensive tooling and infrastructure added
+- Architecture Patterns: Detailed shared package ecosystem
+- Quality Gates: Infrastructure and tooling compliance requirements
+
+Removed Sections:
+- None
+
+Templates Status:
+✅ .specify/templates/plan-template.md - Reviewed, no updates needed
+✅ .specify/templates/spec-template.md - Reviewed, no updates needed
+✅ .specify/templates/tasks-template.md - Reviewed, no updates needed
+
+Follow-up TODOs:
+- Create package README template document in repository
+- Document PNPM workspace catalog usage patterns
+- Create tools/ directory utility script guidelines
+
+Notes:
+- Updated based on comprehensive React repository architectural analysis
+- Specification 001-quasar-project-setup enhanced with 12 new functional requirements (FR-027 through FR-038)
+- Added detailed shared infrastructure package architecture (@universo/* namespace pattern)
+- Expanded build system requirements (Turborepo, dual-build, Vitest)
+- Added code quality automation (Husky, lint-staged)
+- Incorporated containerization standards (Docker, docker-compose)
+- All changes are additive expansions maintaining backward compatibility
+- Constitution now reflects mature monorepo patterns from React implementation
+
+Previous Sync Impact Report (2025-11-16 - Update 1)
 ================================
 Version: 1.0.0 → 1.1.0 (MINOR - Clarifications and expansions)
 
@@ -69,23 +113,28 @@ Each implementation shares the same architectural principles but uses different 
 
 ### I. Monorepo Package Structure
 
-All functionality MUST be organized in a monorepo using PNPM workspace management. Packages MUST be placed in `packages/` directory with clear separation:
+All functionality MUST be organized in a monorepo using PNPM workspace management with catalog-based dependency versioning. Packages MUST be placed in `packages/` directory with clear separation:
 - Frontend packages use `-frt` suffix (e.g., `packages/clusters-frt`)
 - Backend packages use `-srv` suffix (e.g., `packages/clusters-srv`)
+- Shared infrastructure packages use `@universo/` namespace (e.g., `@universo/types`, `@universo/utils`)
 - Each package MUST contain a `base/` root directory to support multiple future implementations
-- Packages MUST be self-contained with clear dependencies
+- Packages MUST be self-contained with clear dependencies managed through workspace references
+- PNPM workspace catalog MUST provide centralized version management for shared dependencies
+- Turborepo MUST orchestrate builds with appropriate caching strategies
 
-**Rationale**: This structure enables modular development, allows for technology stack variations, and supports the future migration of packages to separate repositories while maintaining the base implementation pattern established in Universo Platformo React.
+**Rationale**: This structure enables modular development, allows for technology stack variations, and supports the future migration of packages to separate repositories while maintaining the base implementation pattern established in Universo Platformo React. The workspace catalog pattern ensures dependency version consistency across all packages, preventing version conflicts. Turborepo provides efficient build orchestration critical for monorepo scalability.
 
 ### II. TypeScript-First Development
 
-All code MUST be written in TypeScript for both frontend and backend. No JavaScript exceptions permitted except for configuration files where absolutely necessary.
-- Type safety MUST be enforced with strict TypeScript compiler options
+All code MUST be written in TypeScript with strict mode enabled for both frontend and backend. No JavaScript exceptions permitted except for configuration files where absolutely necessary.
+- TypeScript strict mode MUST be enabled in all tsconfig.json files
+- Type safety MUST be enforced with comprehensive compiler options
 - Type definitions MUST be explicit and comprehensive
-- Shared types MUST be defined in dedicated packages to ensure consistency
+- Shared types MUST be centralized in @universo/types package to ensure consistency
 - Any type assertions MUST be justified with comments
+- Dual-build output (CommonJS + ES Modules + TypeScript declarations) MUST be provided for library packages
 
-**Rationale**: TypeScript provides type safety, better IDE support, and improved maintainability across the Quasar frontend and NestJS backend, preventing runtime errors and enabling confident refactoring.
+**Rationale**: TypeScript with strict mode provides maximum type safety, better IDE support, and improved maintainability across the Quasar frontend and NestJS backend, preventing runtime errors and enabling confident refactoring. Centralized types in @universo/types prevent duplication and maintain consistency. Dual-build support ensures maximum compatibility with different module systems.
 
 ### III. Technology Stack Adherence
 
@@ -152,19 +201,31 @@ The project MUST avoid legacy patterns from Universo Platformo React:
 - **Frontend Framework**: Quasar Framework (latest stable)
 - **Backend Framework**: NestJS (latest stable)
 - **Language**: TypeScript (strict mode enabled)
-- **Package Manager**: PNPM (workspace configuration)
+- **Package Manager**: PNPM with workspace catalog configuration
+- **Build Orchestration**: Turborepo for efficient monorepo builds
 - **UI Components**: Quasar's built-in Material Design components
 - **Authentication**: Passport.js with Supabase strategy
-- **Primary Database**: Supabase (PostgreSQL-based)
+- **Primary Database**: Supabase (PostgreSQL-based with TypeORM)
+- **Testing Framework**: Vitest for unit and integration tests
+- **Code Quality**: ESLint, Prettier, Husky git hooks, lint-staged
+- **Containerization**: Docker with docker-compose support
 - **Version Control**: Git with GitHub
 
 ### Architecture Patterns
 
 - Frontend packages MUST use Quasar's modular architecture
 - Backend packages MUST follow NestJS module-based structure
-- Shared types MUST be in dedicated packages accessible to both frontend and backend
+- Shared infrastructure packages MUST follow @universo/* naming convention:
+  - @universo/types: Centralized TypeScript type definitions
+  - @universo/utils: Shared utility functions and processors
+  - @universo/i18n: Centralized internationalization configuration
+  - @universo/api-client: Type-safe API client implementations
+  - @universo/auth-frt: Authentication UI primitives
+  - @universo/auth-srv: Authentication backend services
 - API communication MUST use RESTful principles with clear contract definitions
-- Database access MUST be abstracted to support future DBMS additions
+- Database access MUST use TypeORM entities for PostgreSQL with architecture supporting future DBMS additions
+- Library packages MUST provide dual-build output (CJS + ESM + TypeScript declarations)
+- Package documentation MUST follow standardized README template structure
 
 ## Development Workflow
 
@@ -172,10 +233,20 @@ The project MUST avoid legacy patterns from Universo Platformo React:
 
 The project MUST be developed in sequential phases to ensure solid foundation:
 
-1. **Phase 1 - Repository Foundation**: Initialize repository with configuration, documentation, PNPM workspace, GitHub infrastructure
-2. **Phase 2 - Base Package Structure**: Create packages/ directory with naming conventions and base/ pattern
-3. **Phase 3 - Clusters Feature**: Implement first functional feature establishing three-entity pattern (Clusters → Domains → Resources)
-4. **Phase 4 - Pattern Replication**: Extend proven patterns to other features (Metaverses, Uniques, Spaces/Canvases)
+1. **Phase 1 - Repository Foundation**: Initialize repository with configuration files (package.json with engines, pnpm-workspace.yaml with catalog, turbo.json, .npmrc, TypeScript configs with strict mode), bilingual documentation, PNPM workspace structure, GitHub infrastructure (labels, issue templates), Husky git hooks, Docker support (Dockerfile, docker-compose.yml, .env.example), tools/ directory utilities, SECURITY.md file
+
+2. **Phase 2 - Shared Infrastructure**: Create shared packages foundation:
+   - @universo/types: TypeScript type definitions package
+   - @universo/utils: Shared utility functions
+   - @universo/i18n: Centralized internationalization
+   - @universo/api-client: Type-safe API communication
+   - @universo/auth-frt: Authentication UI components
+   - @universo/auth-srv: Authentication backend services
+   Establish package README template and Vitest testing infrastructure
+
+3. **Phase 3 - Clusters Feature**: Implement first functional feature establishing three-entity pattern (Clusters → Domains → Resources) with TypeORM entities, demonstrating CRUD operations, Supabase integration, and authentication flow
+
+4. **Phase 4 - Pattern Replication**: Extend proven patterns to other features (Metaverses, Uniques, Spaces/Canvases) using established shared infrastructure
 
 This sequence ensures each phase builds on previous successes, validating patterns before scaling.
 
@@ -208,22 +279,38 @@ This sequence ensures each phase builds on previous successes, validating patter
 
 ### React Repository Monitoring
 
-- **Frequency**: Bi-weekly review of React implementation commits
-- **Evaluation Criteria**: 
+- **Frequency**: Bi-weekly review of React implementation commits and architectural patterns
+- **Evaluation Criteria for Features**: 
   1. Stability: Feature tested in React for 2+ weeks
   2. Pattern Alignment: Can be implemented with Quasar/NestJS best practices
   3. Code Quality: Free of Flowise legacy code
   4. Value Proposition: Clear benefit for Quasar implementation users
-- **Action**: Feature meeting all criteria gets new specification; others documented as skipped with rationale
+- **Architectural Patterns to Monitor**:
+  - Shared infrastructure package evolution (@universo/* patterns)
+  - Workspace packages pattern for backend services
+  - Build tooling improvements (bundler configurations, build pipelines)
+  - Testing infrastructure patterns (Vitest configurations, test utilities)
+  - Documentation templates and standards
+  - TypeORM entity and migration patterns
+  - PNPM workspace catalog usage for dependency management
+  - Turborepo pipeline optimization strategies
+  - Docker and containerization improvements
+  - Git workflow automation (Husky hooks, lint-staged configurations)
+- **Action**: Feature meeting all criteria gets new specification; architectural improvements evaluated for Quasar adaptation; others documented as skipped with rationale
 
 ### Quality Gates
 
-- All TypeScript code MUST compile without errors or warnings
-- All tests MUST pass before PR merge
-- Both English and Russian documentation MUST be present and verified
+- All TypeScript code MUST compile without errors or warnings in strict mode
+- All tests MUST pass before PR merge (Vitest test suite)
+- Both English and Russian documentation MUST be present and verified with identical structure
 - Code MUST follow Quasar and NestJS best practices
 - No legacy patterns from React version may be merged
 - Issue-first workflow MUST be followed (no specification work without GitHub issue)
+- Pre-commit hooks (Husky + lint-staged) MUST pass (ESLint, Prettier)
+- Shared infrastructure packages MUST be used for cross-cutting concerns (types, utils, i18n, api-client)
+- Package README files MUST follow the standardized template structure
+- PNPM workspace catalog MUST be used for all shared dependency versions
+- Library packages MUST provide dual-build output (CJS + ESM + TypeScript declarations)
 
 ## Governance
 
@@ -264,4 +351,4 @@ For runtime development guidance, refer to:
 - `.specify/templates/` directory for specification and planning templates
 - Package-level README files for implementation-specific guidance
 
-**Version**: 1.1.0 | **Ratified**: 2025-11-16 | **Last Amended**: 2025-11-16
+**Version**: 1.2.0 | **Ratified**: 2025-11-16 | **Last Amended**: 2025-11-17
