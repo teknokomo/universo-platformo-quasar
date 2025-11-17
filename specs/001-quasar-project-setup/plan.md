@@ -26,8 +26,8 @@ Initialize the Universo Platformo Quasar repository with complete monorepo infra
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
 ### Principle I: Monorepo Package Structure ✅
-- **Status**: PASS - Specification explicitly requires PNPM workspace with catalog (FR-027), Turborepo (FR-028), packages/ directory (FR-003), -frt/-srv suffixes (FR-004), base/ directories (FR-005), @universo/* namespace for shared packages (FR-029)
-- **Evidence**: FR-002, FR-003, FR-004, FR-005, FR-027, FR-028, FR-029
+- **Status**: PASS - Specification explicitly requires PNPM workspace with catalog (FR-027), Turborepo (FR-028), packages/ directory (FR-003), -frt/-srv suffixes (FR-004), base/ directories (FR-005), @universo/* namespace for shared packages (FR-029). **Updated in v1.4.0**: Added critical warning (FR-000) and concrete examples from React reference implementation.
+- **Evidence**: FR-000 (CRITICAL), FR-002, FR-003, FR-004, FR-005, FR-027, FR-028, FR-029
 
 ### Principle II: TypeScript-First Development ✅
 - **Status**: PASS - Specification mandates TypeScript strict mode (FR-006, FR-030), centralized types in @universo/types (FR-029), dual-build for libraries (FR-035)
@@ -64,6 +64,8 @@ Initialize the Universo Platformo Quasar repository with complete monorepo infra
 ### Overall Gate Status: ✅ PASS
 
 All constitutional principles are satisfied by the specification. No violations to justify.
+
+**Constitution v1.4.0 Update**: Enhanced with critical warnings and concrete examples to ensure UNCONDITIONAL compliance with modular architecture. Added explicit guidance on what MUST/MUST NOT be in packages/, package naming conventions from React reference, and modular architecture validation checklist.
 
 ---
 
