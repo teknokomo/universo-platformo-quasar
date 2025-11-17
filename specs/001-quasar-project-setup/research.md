@@ -33,6 +33,8 @@ This document consolidates research findings and technology decisions for the Un
 - Utilize Quasar's boot files for application initialization (i18n, API client, auth)
 - Follow Quasar's directory structure conventions (layouts, pages, components, boot)
 - Use Quasar's built-in utilities (Platform detection, LocalStorage, Notify, Dialog)
+- Use Pinia (official Vue 3 store) for client-side state management when needed
+- Implement feature-based modular architecture for scalability
 
 ### 2. Backend Framework Selection
 
@@ -106,6 +108,11 @@ Usage in package.json:
 - Configure .npmrc with: auto-install-peers=true, prefer-workspace-packages=true
 - Use `pnpm install --frozen-lockfile` in CI/CD
 - Leverage `pnpm recursive` commands for monorepo operations
+
+**Monorepo Structure Pattern**:
+- **Our Approach**: `packages/*-frt` and `packages/*-srv` for library-first architecture where packages can be independently published and reused
+- **Alternative Pattern**: Some Quasar+NestJS projects use `apps/api` + `apps/web` structure for application-first architecture
+- Both patterns are valid; our choice supports the goal of modular, reusable packages that can eventually be moved to separate repositories while maintaining the base/ directory pattern for multiple implementations
 
 ### 4. Build Orchestration
 
@@ -526,6 +533,36 @@ export class ClustersApiClient {
 - Easy mocking for frontend development
 - Automatic error handling
 
+### 1a. Development Environment Integration
+
+**Pattern**: Quasar Dev Proxy for API Requests
+
+During development, configure Quasar's Vite dev server to proxy API requests to NestJS, eliminating CORS issues:
+
+```javascript
+// quasar.config.js (Vite mode)
+export default defineConfig({
+  devServer: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3002',
+        changeOrigin: true,
+        secure: false
+      }
+    }
+  }
+})
+```
+
+**Benefits**:
+- Eliminates CORS issues during development
+- Mimics production routing where NestJS serves both API and frontend
+- Seamless integration for cookies/sessions (same domain)
+- No need for CORS middleware in development
+- Frontend can use relative paths: `fetch('/api/clusters')`
+
+**Alternative Approach**: Run Quasar and NestJS on separate ports during development, use CORS middleware in NestJS, and configure absolute URLs in frontend. The proxy approach is recommended for simpler setup and production parity.
+
 ### 2. Shared Types Across Stack
 
 **Pattern**: @universo/types package
@@ -757,3 +794,18 @@ None. All technical context is fully specified and researched.
 - Vitest: https://vitest.dev/
 - TypeORM: https://typeorm.io/
 - Universo Platformo React (reference): https://github.com/teknokomo/universo-platformo-react
+
+## Research Validation (2025-11-17)
+
+This research document was validated against current 2024-2025 best practices through:
+- Web search across multiple authoritative sources (NestJS docs, Quasar docs, dev.to, GeeksforGeeks, etc.)
+- Context7 MCP documentation for Quasar Framework (3009 snippets, score: 79.6) and NestJS (1943 snippets, score: 87.3)
+- Community boilerplates: nikolas03/monorepo-nestjs-quasar, composite/quasar-ssr-nestjs-boilerplate
+
+**Validation Results**: All major architectural decisions align with industry best practices. Minor enhancements added:
+1. Pinia state management note for future frontend packages
+2. API proxy pattern for development environment
+3. Alternative monorepo structure pattern documented
+4. Feature-based modular architecture emphasis
+
+**Detailed Findings**: See `research-findings-2025-11-17.md` for comprehensive analysis of web and Context7 research results.
