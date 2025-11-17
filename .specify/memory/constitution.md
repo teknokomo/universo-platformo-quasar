@@ -351,4 +351,4 @@ For runtime development guidance, refer to:
 - `.specify/templates/` directory for specification and planning templates
 - Package-level README files for implementation-specific guidance
 
-**Version**: 1.1.0 | **Ratified**: 2025-11-16 | **Last Amended**: 2025-11-16
+**Version**: 1.2.0 | **Ratified**: 2025-11-16 | **Last Amended**: 2025-11-17
