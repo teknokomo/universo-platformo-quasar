@@ -151,6 +151,97 @@ Usage in package.json:
 - Leverage `turbo run build --filter=...` for selective builds
 - Use persistent: true for long-running dev servers
 
+### 4a. Build Tooling for Library Packages
+
+**Decision**: tsdown (with alternatives documented)
+
+**Rationale**:
+- **Proven in React Repository**: Successfully used in universo-platformo-react for all @universo/* packages
+- **Dual-Build Output**: Produces CommonJS, ES Modules, and TypeScript declarations in single command
+- **Fast Builds**: Powered by esbuild for quick compilation times
+- **Simple Configuration**: Minimal config file (tsdown.config.ts)
+- **Framework Agnostic**: Works with any TypeScript code, not React-specific
+- **Developer Experience**: Watch mode for development, clean builds for production
+
+**Configuration Pattern** (from React repository):
+```typescript
+// packages/universo-types/base/tsdown.config.ts
+import { defineConfig } from 'tsdown'
+
+export default defineConfig({
+  entry: ['src/index.ts'],
+  format: ['esm', 'cjs'],
+  dts: true,
+  clean: true
+})
+```
+
+**Output Structure**:
+```
+dist/
+├── index.js      # CommonJS build
+├── index.mjs     # ES Modules build
+└── index.d.ts    # TypeScript declarations
+```
+
+**Alternatives Evaluated**:
+
+1. **tsup**:
+   - Pros: Similar to tsdown, active development, bundle splitting support
+   - Cons: Less proven in our context, different configuration syntax
+   - Use Case: Consider if tsdown has issues
+
+2. **rollup**:
+   - Pros: Mature, excellent tree-shaking, flexible plugin system
+   - Cons: More complex configuration, requires plugins for TypeScript
+   - Use Case: Complex bundling requirements (not typical for type libraries)
+
+3. **esbuild (direct)**:
+   - Pros: Fastest build times, simple API
+   - Cons: No TypeScript declaration generation, requires additional tooling
+   - Use Case: Non-library packages where types not needed
+
+4. **tsc (TypeScript Compiler)**:
+   - Pros: Official tool, guaranteed TypeScript compatibility
+   - Cons: Slower, requires separate builds for CJS/ESM, no bundling
+   - Use Case: Backend packages where dual-build not critical (some React packages use this)
+
+**Recommendation Strategy**:
+- **Default for Library Packages** (@universo/types, @universo/utils, etc.): **tsdown**
+- **Frontend Applications** (packages/*-frt): **Quasar CLI with Vite** (handles everything)
+- **Backend Applications** (packages/*-srv): **NestJS CLI** or **tsc** (NestJS uses tsc by default)
+- **Simple Type-Only Packages**: Could use **tsc** if no bundling needed
+
+**Best Practices**:
+- Configure `sideEffects: false` in package.json for pure libraries (enables better tree-shaking)
+- Use `"files": ["dist", "src"]` to limit published package contents
+- Enable `dts: true` for TypeScript declaration generation
+- Use `clean: true` to remove old build artifacts
+- Configure multiple entry points via exports field in package.json
+- Test both CJS and ESM imports in consuming packages
+
+**Package.json Pattern** (from React):
+```json
+{
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "sideEffects": false,
+  "files": ["dist", "src"],
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch"
+  }
+}
+```
+
 ### 5. Testing Infrastructure
 
 **Decision**: Vitest with @vitest/coverage-v8 and Happy DOM
@@ -400,18 +491,19 @@ export const i18n = i18next.createInstance({
 |----------|-----------|-------------------|-----------|
 | Frontend Framework | Quasar | latest stable | Material Design built-in, multi-platform |
 | Backend Framework | NestJS | latest stable | Enterprise architecture, TypeScript native |
-| Language | TypeScript | strict mode | Type safety, maintainability |
+| Language | TypeScript | strict mode (packages) | Type safety, maintainability |
 | Package Manager | PNPM | >=9 | Workspace catalog, speed, strict deps |
 | Build Orchestrator | Turborepo | latest stable | Incremental builds, caching |
+| Library Build Tool | tsdown | latest stable | Dual-build (CJS+ESM+DTS), proven in React |
 | Testing Framework | Vitest | latest stable | Performance, Vite integration |
 | Database | Supabase | PostgreSQL | Managed PostgreSQL + auth/storage |
 | ORM | TypeORM | latest stable | Type-safe entities, migrations |
 | Authentication | Passport.js | with Supabase | NestJS integration, extensible |
 | Code Quality | Husky + lint-staged | latest stable | Pre-commit enforcement |
-| Linting | ESLint | latest stable | Code quality, consistency |
+| Linting | ESLint | latest stable | Code quality, unused-imports plugin |
 | Formatting | Prettier | latest stable | Code style consistency |
 | Containerization | Docker + docker-compose | latest stable | Production parity, orchestration |
-| Internationalization | i18next | latest stable | Framework agnostic, namespace support |
+| Internationalization | i18next | latest stable | Centralized instance, namespace support |
 
 ## Integration Patterns
 
@@ -474,6 +566,175 @@ catalog:
 - No version conflicts
 - Easy updates
 - Clear dependency graph
+
+### 4. TypeScript Configuration Strategy
+
+**Pattern**: Root permissive, packages strict (from React repository analysis)
+
+**Root tsconfig.json**:
+```json
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "commonjs",
+    "lib": ["ES2020"],
+    "baseUrl": "./",
+    "paths": {
+      "@testing/backend/*": ["tools/testing/backend/*"],
+      "@testing/frontend": ["tools/testing/frontend/index.ts"],
+      "@testing/frontend/*": ["tools/testing/frontend/*"]
+    },
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "resolveJsonModule": true
+  }
+}
+```
+
+**Package tsconfig.json** (extends root with strict mode):
+```json
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "strict": true,
+    "outDir": "./dist",
+    "rootDir": "./src"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
+```
+
+**Rationale**:
+- **Root Permissive**: Allows tooling compatibility (some tools don't work well with strict mode)
+- **Package Strict**: Enforces type safety in application code where it matters
+- **Decorators**: Required for NestJS dependency injection (experimentalDecorators, emitDecoratorMetadata)
+- **Path Aliases**: Clean imports for testing utilities (@testing/* pattern)
+- **Consistent with React**: Matches proven pattern from universo-platformo-react
+
+**Best Practices**:
+- Always enable strict mode in package tsconfig.json
+- Use path aliases for cross-package utilities
+- Include decorators settings if using NestJS
+- Use resolveJsonModule for importing JSON files
+
+### 5. PNPM Overrides and Configuration
+
+**Pattern**: Security patches and version consistency via overrides
+
+**Root package.json**:
+```json
+{
+  "pnpm": {
+    "overrides": {
+      "axios": "1.7.9",
+      "typeorm": "0.3.6",
+      "zod": "3.25.76"
+    }
+  }
+}
+```
+
+**.npmrc Configuration**:
+```
+auto-install-peers = true
+strict-peer-dependencies = false
+prefer-workspace-packages = true
+link-workspace-packages = deep
+hoist = true
+shamefully-hoist = true
+```
+
+**Rationale**:
+- **Security**: Override vulnerable dependency versions across entire monorepo
+- **Consistency**: Ensure all packages use same version of critical dependencies
+- **Workspace Packages**: Prefer local packages over registry versions
+- **Hoisting**: Optimize node_modules structure for compatibility
+
+**Best Practices**:
+- Use overrides sparingly (only for security patches or critical version conflicts)
+- Document reason for each override
+- Review overrides when dependencies update
+- Test that overrides don't break functionality
+
+### 6. Package Optimization Fields
+
+**Pattern**: sideEffects and files for better bundling (from React packages)
+
+**Pure Library** (no side effects):
+```json
+{
+  "name": "@universo/types",
+  "sideEffects": false,
+  "files": ["dist", "src"]
+}
+```
+
+**Package with Initialization** (has side effects):
+```json
+{
+  "name": "@universo/i18n",
+  "sideEffects": true,
+  "files": ["dist", "src"]
+}
+```
+
+**Rationale**:
+- **sideEffects: false**: Enables aggressive tree-shaking (bundlers can safely remove unused exports)
+- **sideEffects: true**: Preserves initialization code (i18n setup, global registrations)
+- **files field**: Limits published package size (only includes necessary files)
+
+**Best Practices**:
+- Set sideEffects: false for type-only or pure utility packages
+- Set sideEffects: true for packages that initialize globals or have setup code
+- Always include "dist" and "src" in files array
+- Test that sideEffects setting doesn't break consumers
+
+### 7. Multiple Export Entry Points
+
+**Pattern**: Specialized exports for lazy-loading (from React @universo/* packages)
+
+**package.json exports**:
+```json
+{
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./i18n": {
+      "types": "./dist/i18n/index.d.ts",
+      "import": "./dist/i18n/index.mjs",
+      "require": "./dist/i18n/index.js"
+    }
+  }
+}
+```
+
+**Usage**:
+```typescript
+// Main package
+import { ClusterComponent } from '@universo/clusters-frt'
+
+// Lazy-load translations
+import i18n from '@universo/i18n'
+import '@universo/clusters-frt/i18n'  // Registers cluster translations
+```
+
+**Rationale**:
+- **Bundle Size**: Separate translations from main bundle
+- **Lazy Loading**: Load translations on-demand or per-route
+- **Modularity**: Consumers can import only what they need
+
+**Best Practices**:
+- Provide main export (.) for primary functionality
+- Create specialized exports for translations, styles, or optional features
+- Document all available exports in README
+- Ensure TypeScript types are provided for all exports
 
 ## Unresolved Questions
 
