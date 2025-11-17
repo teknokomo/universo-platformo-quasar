@@ -168,6 +168,17 @@ A developer sets up their local development environment with necessary tools and
 - **FR-036**: Repository MUST include tools/ directory for utility scripts (documentation validation, testing utilities) that support development workflows
 - **FR-037**: Repository MUST implement SECURITY.md file documenting security reporting procedures and policies
 - **FR-038**: Repository structure MUST support workspace packages pattern where shared backend services can be imported as packages (e.g., @universo/package-srv) by main server
+- **FR-039**: Root tsconfig.json MUST include experimentalDecorators and emitDecoratorMetadata compiler options for NestJS compatibility (decorators are core to NestJS dependency injection)
+- **FR-040**: Root tsconfig.json MUST include path aliases for @testing/* utilities to enable clean imports in test files across all packages
+- **FR-041**: Package template MUST include sideEffects field in package.json (false for pure libraries without initialization code, true for packages with side effects like i18n initialization)
+- **FR-042**: Package template MUST include files field in package.json to limit published content (typically ["dist", "src"]) for smaller package sizes
+- **FR-043**: tools/docs directory MUST include check-i18n-docs.mjs utility script for validating English/Russian documentation parity (line count, structure matching)
+- **FR-044**: Prettier configuration MUST be defined in root package.json with settings: printWidth 140, singleQuote true, trailingComma none, tabWidth 4, semi false, endOfLine auto
+- **FR-045**: Root package.json MUST include pnpm.overrides section for security patches and version consistency (format: "package-name": "version")
+- **FR-046**: Repository MUST include TEMPLATE-README-GUIDE.md documenting how to use the package README template, with guidance on required sections, bilingual requirements, and code examples
+- **FR-047**: Package template MUST support multiple export entry points pattern (main export + specialized exports like /i18n for lazy-loading translations)
+- **FR-048**: ESLint configuration MUST include unused-imports plugin to automatically detect and report unused import statements
+- **FR-049**: Build tooling for library packages MUST be documented with selected tool (tsdown recommended based on React patterns) and rationale for dual-build output
 
 ### Key Entities
 
@@ -218,6 +229,16 @@ A developer sets up their local development environment with necessary tools and
 - **SC-028**: Build configuration supports dual-output (CommonJS + ES Modules + TypeScript declarations) for library packages
 - **SC-029**: Workspace packages pattern is documented showing how backend services can be imported as packages
 - **SC-030**: TypeScript strict mode is enabled in all package tsconfig.json files
+- **SC-031**: Root tsconfig.json includes experimentalDecorators and emitDecoratorMetadata for NestJS compatibility
+- **SC-032**: TypeScript path aliases are configured for @testing/* utilities in root tsconfig.json
+- **SC-033**: Package template includes sideEffects and files fields in package.json
+- **SC-034**: tools/docs/check-i18n-docs.mjs exists and validates English/Russian documentation parity
+- **SC-035**: Prettier configuration is defined in root package.json with specified settings
+- **SC-036**: TEMPLATE-README-GUIDE.md exists with comprehensive guidance on using package template
+- **SC-037**: Package template demonstrates multiple export entry points pattern
+- **SC-038**: ESLint configuration includes unused-imports plugin
+- **SC-039**: Build tooling for library packages is documented with tool selection and rationale
+- **SC-040**: pnpm.overrides section exists in root package.json for dependency management
 
 ## Development Workflow & Sequencing *(optional)*
 
@@ -465,13 +486,21 @@ shamefully-hoist = true            # Hoist all dependencies (compatibility)
 - Developers have basic familiarity with monorepo concepts and PNPM workspaces
 - The Quasar framework and NestJS are chosen as the technology stack (no alternatives being considered)
 - Supabase will be used for database functionality with architecture designed for future DBMS expansion (TypeORM entities for PostgreSQL)
-- The project will use TypeScript exclusively for both frontend and backend with strict mode enabled
+- The project will use TypeScript exclusively for both frontend and backend with strict mode enabled in packages (root tsconfig can be permissive for tooling compatibility)
 - Quasar's built-in Material Design components will be used for UI consistency (not a separate @mui/material package like React's MUI)
 - The project structure follows the React implementation conceptually but not at the code level - implementation patterns must follow Quasar/NestJS best practices
 - The React implementation (github.com/teknokomo/universo-platformo-react) contains Flowise legacy code that will NOT be ported
 - React repository will be monitored bi-weekly for new proven features worth adapting to Quasar/NestJS stack
 - Feature porting from React requires: (a) feature stability in React version, (b) alignment with Quasar/NestJS patterns, (c) absence of Flowise legacy code, (d) clear value for Quasar implementation
 - GitHub Issues and Pull Requests will be the primary tools for task management, with Issue creation required before specification work
+- tsdown (or documented alternative like tsup, rollup, esbuild) will be used for library package dual-build (CJS + ESM + DTS)
+- Root tsconfig.json includes NestJS-required compiler options (experimentalDecorators, emitDecoratorMetadata) while packages maintain strict mode
+- Prettier configuration in root package.json ensures consistent code formatting across entire monorepo
+- PNPM overrides mechanism will be used for security patches and dependency version consistency
+- Package optimization fields (sideEffects, files) will be included for better tree-shaking and smaller published packages
+- Multiple export entry points pattern (e.g., /i18n) enables lazy-loading and modular imports
+- ESLint with unused-imports plugin enforces clean imports across all TypeScript code
+- check-i18n-docs.mjs utility automates validation of bilingual documentation parity
 - Documentation will be maintained in both English and Russian languages only (not additional languages initially), with English created first as primary source
 - The Omsk Open License applies to new code (detailed license terms to be established), while dependencies and packages may have their own licenses that must be documented
 - Initial repository setup includes creating base label set per github-labels.md; afterwards only existing labels are used
