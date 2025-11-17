@@ -1,5 +1,48 @@
 <!--
-Sync Impact Report (2025-11-16 - Update 2)
+Sync Impact Report (2025-11-17 - Update 3)
+================================
+Version: 1.2.0 → 1.3.0 (MINOR - React repository deep patterns integration)
+
+Modified Principles:
+- Principle II (TypeScript-First Development): Clarified root can be permissive while packages must use strict mode (matching React pattern)
+- Technology Stack > Required Technologies: Added build tooling specification (tsdown for libraries, Quasar CLI, NestJS CLI), ESLint plugins (unused-imports)
+- Technology Stack > Architecture Patterns: Added package template guide (TEMPLATE-README-GUIDE.md), sideEffects field, files field, multiple export patterns, tsconfig decorators/path aliases, Prettier in root, PNPM overrides, centralized i18next instance
+- Development Workflow > Project Development Sequence > Phase 1: Added Prettier config, PNPM overrides, tsconfig decorators/path aliases, check-i18n-docs.mjs, TEMPLATE-README-GUIDE.md
+- Development Workflow > Quality Gates: Added check-i18n-docs.mjs validation, ESLint unused-imports plugin, sideEffects field, files field, tsconfig NestJS compatibility, @testing/* path aliases
+
+Added Sections:
+- None (enhancements to existing sections)
+
+Enhanced Sections:
+- Technology Stack: Build tooling details, ESLint plugin specification
+- Architecture Patterns: Package optimization fields, export patterns, configuration requirements
+- Quality Gates: Additional validation rules for packages and configuration
+
+Removed Sections:
+- None
+
+Templates Status:
+✅ .specify/templates/plan-template.md - Reviewed, no updates needed
+✅ .specify/templates/spec-template.md - Reviewed, no updates needed
+✅ .specify/templates/tasks-template.md - Reviewed, no updates needed
+
+Follow-up TODOs:
+- Create TEMPLATE-README-GUIDE.md in repository
+- Port check-i18n-docs.mjs to tools/docs/
+- Evaluate tsdown vs alternatives (document in research.md)
+- Document TypeScript strict mode strategy (root permissive, packages strict)
+
+Notes:
+- Updated based on deep architectural patterns comparison with React repository
+- Created architectural-patterns-comparison.md documenting comprehensive analysis
+- Identified 10 categories already incorporated, 12 patterns requiring adaptation
+- Added 7 new specification requirements (FR-039 through FR-046 planned)
+- Focus on universal architectural patterns applicable to Quasar/NestJS
+- Explicitly avoided React-specific patterns and Flowise legacy code
+- Maintains backward compatibility with version 1.2.0
+- All changes are additive enhancements based on proven React patterns
+
+Previous Sync Impact Report (2025-11-16 - Update 2)
 ================================
 Version: 1.1.0 → 1.2.0 (MINOR - Architectural patterns and infrastructure expansion)
 
@@ -200,14 +243,15 @@ The project MUST avoid legacy patterns from Universo Platformo React:
 
 - **Frontend Framework**: Quasar Framework (latest stable)
 - **Backend Framework**: NestJS (latest stable)
-- **Language**: TypeScript (strict mode enabled)
+- **Language**: TypeScript (strict mode enabled in packages, root can be permissive)
 - **Package Manager**: PNPM with workspace catalog configuration
 - **Build Orchestration**: Turborepo for efficient monorepo builds
+- **Build Tooling**: tsdown (or documented alternative) for library dual-build, Quasar CLI for frontend, NestJS CLI for backend
 - **UI Components**: Quasar's built-in Material Design components
 - **Authentication**: Passport.js with Supabase strategy
 - **Primary Database**: Supabase (PostgreSQL-based with TypeORM)
 - **Testing Framework**: Vitest for unit and integration tests
-- **Code Quality**: ESLint, Prettier, Husky git hooks, lint-staged
+- **Code Quality**: ESLint (with unused-imports plugin), Prettier, Husky git hooks, lint-staged
 - **Containerization**: Docker with docker-compose support
 - **Version Control**: Git with GitHub
 
@@ -218,14 +262,21 @@ The project MUST avoid legacy patterns from Universo Platformo React:
 - Shared infrastructure packages MUST follow @universo/* naming convention:
   - @universo/types: Centralized TypeScript type definitions
   - @universo/utils: Shared utility functions and processors
-  - @universo/i18n: Centralized internationalization configuration
+  - @universo/i18n: Centralized internationalization configuration with single i18next instance
   - @universo/api-client: Type-safe API client implementations
   - @universo/auth-frt: Authentication UI primitives
   - @universo/auth-srv: Authentication backend services
 - API communication MUST use RESTful principles with clear contract definitions
 - Database access MUST use TypeORM entities for PostgreSQL with architecture supporting future DBMS additions
 - Library packages MUST provide dual-build output (CJS + ESM + TypeScript declarations)
-- Package documentation MUST follow standardized README template structure
+- Package documentation MUST follow standardized README template structure (TEMPLATE-README.md with TEMPLATE-README-GUIDE.md)
+- Packages MUST include sideEffects field (false for pure libraries, true for packages with initialization code)
+- Packages MUST include files field to limit published content (typically ["dist", "src"])
+- Packages MUST use multiple export entry points pattern (main export + specialized exports like /i18n)
+- Root tsconfig.json MUST include experimentalDecorators and emitDecoratorMetadata for NestJS compatibility
+- Root tsconfig.json MUST define path aliases for @testing/* utilities
+- Prettier configuration MUST be defined in root package.json for consistency
+- PNPM overrides MUST be used for security patches and version consistency
 
 ## Development Workflow
 
@@ -233,7 +284,7 @@ The project MUST avoid legacy patterns from Universo Platformo React:
 
 The project MUST be developed in sequential phases to ensure solid foundation:
 
-1. **Phase 1 - Repository Foundation**: Initialize repository with configuration files (package.json with engines, pnpm-workspace.yaml with catalog, turbo.json, .npmrc, TypeScript configs with strict mode), bilingual documentation, PNPM workspace structure, GitHub infrastructure (labels, issue templates), Husky git hooks, Docker support (Dockerfile, docker-compose.yml, .env.example), tools/ directory utilities, SECURITY.md file
+1. **Phase 1 - Repository Foundation**: Initialize repository with configuration files (package.json with engines and prettier config, pnpm-workspace.yaml with catalog, turbo.json, .npmrc, TypeScript configs with decorators and path aliases, PNPM overrides for security), bilingual documentation, PNPM workspace structure, GitHub infrastructure (labels, issue templates), Husky git hooks, Docker support (Dockerfile, docker-compose.yml, .env.example), tools/ directory utilities (including check-i18n-docs.mjs), SECURITY.md file, TEMPLATE-README-GUIDE.md
 
 2. **Phase 2 - Shared Infrastructure**: Create shared packages foundation:
    - @universo/types: TypeScript type definitions package
@@ -300,17 +351,21 @@ This sequence ensures each phase builds on previous successes, validating patter
 
 ### Quality Gates
 
-- All TypeScript code MUST compile without errors or warnings in strict mode
+- All TypeScript code MUST compile without errors or warnings in strict mode (packages)
 - All tests MUST pass before PR merge (Vitest test suite)
-- Both English and Russian documentation MUST be present and verified with identical structure
+- Both English and Russian documentation MUST be present and verified with identical structure (validated by check-i18n-docs.mjs)
 - Code MUST follow Quasar and NestJS best practices
 - No legacy patterns from React version may be merged
 - Issue-first workflow MUST be followed (no specification work without GitHub issue)
-- Pre-commit hooks (Husky + lint-staged) MUST pass (ESLint, Prettier)
+- Pre-commit hooks (Husky + lint-staged) MUST pass (ESLint with unused-imports, Prettier)
 - Shared infrastructure packages MUST be used for cross-cutting concerns (types, utils, i18n, api-client)
-- Package README files MUST follow the standardized template structure
+- Package README files MUST follow the standardized template structure (TEMPLATE-README.md)
 - PNPM workspace catalog MUST be used for all shared dependency versions
 - Library packages MUST provide dual-build output (CJS + ESM + TypeScript declarations)
+- Packages MUST include sideEffects field for tree-shaking optimization
+- Packages MUST include files field to limit published content
+- Root tsconfig.json MUST be validated for NestJS compatibility (decorators, emitDecoratorMetadata)
+- TypeScript path aliases MUST be configured for @testing/* utilities
 
 ## Governance
 
@@ -351,4 +406,4 @@ For runtime development guidance, refer to:
 - `.specify/templates/` directory for specification and planning templates
 - Package-level README files for implementation-specific guidance
 
-**Version**: 1.2.0 | **Ratified**: 2025-11-16 | **Last Amended**: 2025-11-17
+**Version**: 1.3.0 | **Ratified**: 2025-11-16 | **Last Amended**: 2025-11-17
