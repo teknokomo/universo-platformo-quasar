@@ -130,10 +130,11 @@ A developer sets up their local development environment with necessary tools and
 
 ### Functional Requirements
 
+- **FR-000**: ⚠️ **CRITICAL - NON-NEGOTIABLE**: ALL functionality (except root configuration and build files) MUST be implemented as workspace packages in the `packages/` directory. Each functional package MUST be separated into frontend (`*-frt`) and backend (`*-srv`) packages when both are needed. Implementing functionality outside `packages/` violates core architecture and prevents future migration to separate repositories. Examples from reference implementation: `clusters-frt`, `clusters-srv`, `spaces-frt`, `spaces-srv`, `@universo/types`, `@universo/utils`.
 - **FR-001**: Repository MUST include README.md and README-RU.md with identical structure and content (one in English, one in Russian)
 - **FR-002**: Repository MUST use PNPM workspace configuration for monorepo management
-- **FR-003**: Repository MUST define package structure in packages/ directory following React implementation patterns
-- **FR-004**: Packages MUST be organized with -frt suffix for frontend and -srv suffix for backend functionality
+- **FR-003**: Repository MUST define package structure in packages/ directory following React implementation patterns. Concrete examples from reference: functional packages (`clusters-frt`, `clusters-srv`, `spaces-frt`, `spaces-srv`, `metaverses-frt`, `metaverses-srv`, `uniks-frt`, `uniks-srv`, `auth-frt`, `auth-srv`), shared packages (`@universo/types`, `@universo/utils`, `@universo/i18n`, `@universo/api-client`). PNPM workspace configuration MUST include both `packages/*` and `packages/*/base` patterns.
+- **FR-004**: Packages MUST be organized with -frt suffix for frontend (e.g., `packages/clusters-frt/base/`, `packages/spaces-frt/base/`) and -srv suffix for backend functionality (e.g., `packages/clusters-srv/base/`, `packages/spaces-srv/base/`). Package names in package.json MUST use @universo/ namespace: `@universo/clusters-frt`, `@universo/clusters-srv`.
 - **FR-005**: Each package MUST contain a base/ directory for core implementations to support future alternative implementations
 - **FR-006**: Repository MUST include proper TypeScript configuration for both Quasar and NestJS development with strict mode enabled
 - **FR-007**: Repository MUST include ESLint and Prettier configuration for code quality and consistency

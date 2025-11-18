@@ -8,6 +8,59 @@
 
 This guide helps you get started with the Universo Platformo Quasar monorepo. Follow these steps to set up your development environment, understand the repository structure, and begin contributing.
 
+## ⚠️ Critical: Modular Architecture
+
+**This project uses a STRICT modular architecture - this is NON-NEGOTIABLE.**
+
+### Core Principle
+
+ALL functionality MUST be implemented as workspace packages in the `packages/` directory. This is not just a recommendation - it's a fundamental architectural requirement that enables:
+
+1. **Independent Development**: Each package can be developed, tested, and deployed independently
+2. **Clear Boundaries**: Explicit separation between frontend and backend, between features
+3. **Future Extraction**: Packages are designed from day one to be moved to separate repositories
+4. **Technology Flexibility**: Different packages can use different versions or even different tech stacks in the future
+
+### Package Organization Rules
+
+**Frontend Packages** (`-frt` suffix):
+- Quasar-based UI components, pages, and client-side logic
+- Examples: `@universo/clusters-frt`, `@universo/spaces-frt`, `@universo/auth-frt`
+- Located: `packages/{feature}-frt/base/`
+
+**Backend Packages** (`-srv` suffix):
+- NestJS-based API services, controllers, and business logic
+- Examples: `@universo/clusters-srv`, `@universo/spaces-srv`, `@universo/auth-srv`
+- Located: `packages/{feature}-srv/base/`
+
+**Shared Packages** (`@universo/*` namespace):
+- Type definitions, utilities, i18n, API clients
+- Examples: `@universo/types`, `@universo/utils`, `@universo/i18n`, `@universo/api-client`
+- Located: `packages/{name}/base/`
+
+### What This Means for You
+
+✅ **DO**:
+- Put all features, components, services in separate packages
+- Split frontend and backend into separate packages
+- Use `base/` subdirectory in each package
+- Follow the `@universo/` namespace convention
+- Make packages independently buildable
+
+❌ **DON'T**:
+- Create functionality in repository root
+- Mix frontend and backend in one package
+- Skip the `base/` subdirectory
+- Create packages without proper namespace
+
+### Reference Implementation
+
+This architecture is proven in the universo-platformo-react repository, which has 20+ modular packages including:
+- Functional pairs: `clusters-frt`/`clusters-srv`, `spaces-frt`/`spaces-srv`, `metaverses-frt`/`metaverses-srv`
+- Shared infrastructure: `@universo/types`, `@universo/utils`, `@universo/i18n`, `@universo/api-client`
+
+**For detailed validation**: See `.specify/memory/modular-architecture-checklist.md`
+
 ## Prerequisites
 
 ### Required Software
@@ -79,24 +132,45 @@ pnpm turbo run test
 
 ## Repository Structure
 
+⚠️ **CRITICAL**: This project follows a strict modular architecture. ALL functionality MUST be implemented as workspace packages in the `packages/` directory. The root contains ONLY configuration files.
+
+### Directory Layout
+
 ```
 universo-platformo-quasar/
 ├── .github/                 # GitHub configuration
 │   ├── instructions/        # Development guidelines
+│   ├── agents/              # Agent-specific instructions
 │   └── workflows/          # CI/CD pipelines (future)
-├── .husky/                 # Git hooks
+├── .husky/                 # Git hooks (pre-commit checks)
 ├── .specify/               # Specification templates and scripts
+│   └── memory/             # Project constitution and checklists
 ├── docker/                 # Docker configuration
 │   ├── Dockerfile
 │   ├── docker-compose.yml
 │   └── .env.example
-├── packages/               # Workspace packages
-│   ├── types/             # @universo/types
-│   ├── utils/             # @universo/utils
-│   ├── i18n/              # @universo/i18n
-│   └── api-client/        # @universo/api-client
+├── packages/               # ⚠️ ALL FUNCTIONALITY GOES HERE
+│   │
+│   # Shared Infrastructure (@universo/* namespace)
+│   ├── types/base/         # @universo/types - TypeScript definitions
+│   ├── utils/base/         # @universo/utils - Utility functions
+│   ├── i18n/base/          # @universo/i18n - Internationalization
+│   ├── api-client/base/    # @universo/api-client - Type-safe API clients
+│   │
+│   # Authentication (separated frontend/backend)
+│   ├── auth-frt/base/      # @universo/auth-frt - Authentication UI
+│   ├── auth-srv/base/      # @universo/auth-srv - Authentication backend
+│   │
+│   # Functional Packages (examples from reference implementation)
+│   ├── clusters-frt/base/  # @universo/clusters-frt - Clusters frontend (Quasar)
+│   ├── clusters-srv/base/  # @universo/clusters-srv - Clusters backend (NestJS)
+│   ├── spaces-frt/base/    # @universo/spaces-frt - Spaces frontend
+│   ├── spaces-srv/base/    # @universo/spaces-srv - Spaces backend
+│   ├── metaverses-frt/base/# @universo/metaverses-frt - Metaverses frontend
+│   └── metaverses-srv/base/# @universo/metaverses-srv - Metaverses backend
+│
 ├── specs/                  # Feature specifications
-├── tools/                  # Utility scripts
+├── tools/                  # Utility scripts (no business logic)
 │   ├── docs/              # Documentation validation
 │   └── testing/           # Testing utilities
 ├── .eslintrc.json         # ESLint configuration
@@ -106,12 +180,38 @@ universo-platformo-quasar/
 ├── LICENSE                # Omsk Open License
 ├── package.json           # Root workspace configuration
 ├── pnpm-workspace.yaml    # PNPM workspace + catalog
-├── README.md              # English documentation (you are here)
+├── README.md              # English documentation
 ├── README-RU.md           # Russian documentation
 ├── SECURITY.md            # Security policy
 ├── tsconfig.json          # Base TypeScript config
 └── turbo.json             # Turborepo configuration
 ```
+
+### Key Architecture Principles
+
+1. **All Functionality in Packages**: Every feature, component, service, and reusable code MUST be in a package
+2. **Frontend/Backend Separation**: Use `-frt` suffix for frontend, `-srv` suffix for backend
+3. **Base Directory Pattern**: Each package has `base/` subdirectory for core implementation
+4. **Namespace Convention**: All packages use `@universo/` namespace
+5. **Future Extraction Ready**: Packages designed from day one to be moved to separate repositories
+
+### What Goes Where
+
+**✅ In `packages/` (ALL functionality)**:
+- Business logic and services
+- UI components and pages
+- Data models and entities
+- API controllers and routes
+- Shared types and utilities
+- Authentication and authorization
+- Any reusable code
+
+**❌ Not in `packages/` (Configuration only)**:
+- Workspace configuration files
+- Build and tooling configuration
+- Git hooks and quality tools
+- Root documentation
+- Docker and development scripts
 
 ## Common Commands
 

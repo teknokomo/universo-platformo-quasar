@@ -1,5 +1,42 @@
 <!--
-Sync Impact Report (2025-11-17 - Update 3)
+Sync Impact Report (2025-11-17 - Update 4)
+================================
+Version: 1.3.0 → 1.4.0 (MINOR - Modular architecture enforcement and clarity)
+
+Modified Principles:
+- Principle I (Monorepo Package Structure): Added CRITICAL WARNING about non-modular implementation, explicit examples of what MUST/MUST NOT be in packages/, package naming convention examples from React repo, workspace configuration pattern, strengthened rationale about future repository extraction
+
+Added Sections:
+- Examples of proper package organization from reference implementation
+- Explicit list of what belongs in packages/ vs repository root
+- Package naming convention with concrete examples
+- Workspace configuration pattern (packages/* and packages/*/base)
+
+Enhanced Sections:
+- Principle I: Comprehensive examples, critical warnings, concrete structure from React implementation
+
+Removed Sections:
+- None
+
+Templates Status:
+✅ .specify/templates/plan-template.md - Reviewed, no updates needed
+✅ .specify/templates/spec-template.md - Reviewed, no updates needed
+✅ .specify/templates/tasks-template.md - Reviewed, no updates needed
+
+Follow-up TODOs:
+- Update copilot-instructions.md with modular architecture emphasis
+- Add validation checklist for modular compliance
+- Enhance specification with concrete package structure examples
+
+Notes:
+- Updated based on user requirement to ensure UNCONDITIONAL and UNAMBIGUOUS modular architecture
+- Added critical warnings to prevent non-modular implementation
+- Included concrete examples from universo-platformo-react reference implementation
+- Emphasized that packages are designed from day one to be extractable to separate repositories
+- All changes strengthen existing principles without breaking compatibility
+- Version bump reflects significant clarification and enforcement additions
+
+Previous Sync Impact Report (2025-11-17 - Update 3)
 ================================
 Version: 1.2.0 → 1.3.0 (MINOR - React repository deep patterns integration)
 
@@ -154,18 +191,54 @@ Each implementation shares the same architectural principles but uses different 
 
 ## Core Principles
 
-### I. Monorepo Package Structure
+### I. Monorepo Package Structure (CRITICAL - NON-NEGOTIABLE)
 
+⚠️ **CRITICAL WARNING**: ALL functionality (except root configuration and build files) MUST be implemented as workspace packages in the `packages/` directory. Implementing functionality outside of `packages/` violates the core architectural principle and prevents future migration to separate repositories. This is NON-NEGOTIABLE.
+
+**Mandatory Package Organization**:
 All functionality MUST be organized in a monorepo using PNPM workspace management with catalog-based dependency versioning. Packages MUST be placed in `packages/` directory with clear separation:
-- Frontend packages use `-frt` suffix (e.g., `packages/clusters-frt`)
-- Backend packages use `-srv` suffix (e.g., `packages/clusters-srv`)
-- Shared infrastructure packages use `@universo/` namespace (e.g., `@universo/types`, `@universo/utils`)
+
+- **Frontend packages** use `-frt` suffix → `packages/clusters-frt`, `packages/spaces-frt`, `packages/metaverses-frt`
+- **Backend packages** use `-srv` suffix → `packages/clusters-srv`, `packages/spaces-srv`, `packages/metaverses-srv`
+- **Shared infrastructure packages** use `@universo/` namespace → `@universo/types`, `@universo/utils`, `@universo/i18n`, `@universo/api-client`
 - Each package MUST contain a `base/` root directory to support multiple future implementations
 - Packages MUST be self-contained with clear dependencies managed through workspace references
 - PNPM workspace catalog MUST provide centralized version management for shared dependencies
 - Turborepo MUST orchestrate builds with appropriate caching strategies
 
-**Rationale**: This structure enables modular development, allows for technology stack variations, and supports the future migration of packages to separate repositories while maintaining the base implementation pattern established in Universo Platformo React. The workspace catalog pattern ensures dependency version consistency across all packages, preventing version conflicts. Turborepo provides efficient build orchestration critical for monorepo scalability.
+**What MUST be in packages/** (Examples from reference implementation):
+- ✅ All functional features: `clusters-frt`, `clusters-srv`, `metaverses-frt`, `metaverses-srv`, `spaces-frt`, `spaces-srv`, `uniks-frt`, `uniks-srv`
+- ✅ Authentication: `auth-frt`, `auth-srv`
+- ✅ Shared infrastructure: `@universo/types`, `@universo/utils`, `@universo/i18n`, `@universo/api-client`
+- ✅ UI templates: `@universo/template-mui` (in Quasar: equivalent Quasar templates)
+- ✅ Any reusable business logic, UI components, or services
+
+**What MUST NOT be in packages/** (Allowed in repository root only):
+- ❌ Workspace configuration: `package.json`, `pnpm-workspace.yaml`, `turbo.json`, `.npmrc`, `tsconfig.json`
+- ❌ Code quality tools: `.eslintrc.*`, `.prettierrc`, `.husky/`, `lint-staged.config.*`
+- ❌ Git configuration: `.gitignore`, `.gitattributes`
+- ❌ Documentation: Root `README.md`, `README-RU.md`, `LICENSE`, `SECURITY.md`
+- ❌ Development tools: `docker/`, `tools/` (utility scripts)
+- ❌ Specification documents: `specs/`, `.specify/`
+
+**Package Naming Convention** (from reference implementation):
+```
+packages/
+├── clusters-frt/base/package.json     # name: "@universo/clusters-frt"
+├── clusters-srv/base/package.json     # name: "@universo/clusters-srv"
+├── universo-types/base/package.json   # name: "@universo/types"
+└── universo-utils/base/package.json   # name: "@universo/utils"
+```
+
+**Workspace Configuration Pattern**:
+```yaml
+# pnpm-workspace.yaml (from reference implementation)
+packages:
+    - 'packages/*'
+    - 'packages/*/base'
+```
+
+**Rationale**: This structure enables modular development, allows for technology stack variations, and UNCONDITIONALLY supports the future migration of individual packages to separate repositories while maintaining the base implementation pattern established in Universo Platformo React. The workspace catalog pattern ensures dependency version consistency across all packages, preventing version conflicts. Turborepo provides efficient build orchestration critical for monorepo scalability. **CRITICAL**: Packages are designed from day one to be extractable into separate repositories - this is a fundamental requirement, not an optional feature.
 
 ### II. TypeScript-First Development
 
@@ -406,4 +479,4 @@ For runtime development guidance, refer to:
 - `.specify/templates/` directory for specification and planning templates
 - Package-level README files for implementation-specific guidance
 
-**Version**: 1.3.0 | **Ratified**: 2025-11-16 | **Last Amended**: 2025-11-17
+**Version**: 1.4.0 | **Ratified**: 2025-11-16 | **Last Amended**: 2025-11-17
