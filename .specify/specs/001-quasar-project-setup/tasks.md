@@ -1,6 +1,6 @@
 # Tasks: Universo Platformo Quasar Project Setup
 
-**Input**: Design documents from `/specs/001-quasar-project-setup/`
+**Input**: Design documents from `/.specify/specs/001-quasar-project-setup/`
 **Prerequisites**: plan.md ✅, spec.md ✅, research.md ✅, data-model.md ✅, contracts/ ✅, quickstart.md ✅
 
 **Tests**: Tests are NOT requested in the feature specification - no test tasks included per template guidelines.
@@ -73,7 +73,7 @@ This is a monorepo project with packages in `packages/` directory. All functiona
 
 ### Implementation for User Story 1
 
-- [ ] T029 [P] [US1] Create specs/ directory and document feature specification structure in repository root
+- [ ] T029 [P] [US1] Create .specify/specs/ directory and document feature specification structure in repository root
 - [ ] T030 [P] [US1] Create .specify/ directory structure (.specify/memory/, .specify/scripts/, .specify/templates/) in repository root
 - [ ] T031 [P] [US1] Create .vscode/ directory with recommended extensions for Quasar/NestJS development (Volar, ESLint, Prettier, TypeScript Vue Plugin)
 - [ ] T032 [P] [US1] Document React repository monitoring process in README.md (bi-weekly review schedule, 4-point evaluation criteria: stability, pattern alignment, code quality, value proposition)
@@ -233,7 +233,7 @@ This is a monorepo project with packages in `packages/` directory. All functiona
 - [ ] T120 [US5] Test Docker build process with `docker build -f docker/Dockerfile .`
 - [ ] T121 [US5] Test Docker Compose with `cd docker && docker-compose up` (may fail without actual services, document expected behavior)
 - [ ] T122 [US5] Document troubleshooting section in README.md (PNPM issues, build errors, TypeScript errors, git hook failures, Docker issues)
-- [ ] T123 [US5] Create quickstart validation checklist based on specs/001-quasar-project-setup/quickstart.md
+- [ ] T123 [US5] Create quickstart validation checklist based on .specify/specs/001-quasar-project-setup/quickstart.md
 - [ ] T124 [US5] Test pre-commit hooks by staging files and attempting commit
 - [ ] T125 [US5] Verify ESLint runs on TypeScript files and catches issues
 - [ ] T126 [US5] Verify Prettier formats code correctly
@@ -259,7 +259,7 @@ This is a monorepo project with packages in `packages/` directory. All functiona
 - [ ] T137 [P] Review SECURITY.md for completeness and clarity
 - [ ] T138 [P] Review LICENSE for proper Omsk Open License statement
 - [ ] T139 [P] Validate all root configuration files one final time (package.json, pnpm-workspace.yaml, turbo.json, etc.)
-- [ ] T140 Create final validation checklist based on specs/001-quasar-project-setup/quickstart.md
+- [ ] T140 Create final validation checklist based on .specify/specs/001-quasar-project-setup/quickstart.md
 - [ ] T141 Execute quickstart.md validation: Clone repository in fresh directory, follow all setup steps, verify everything works
 - [ ] T142 Document known limitations or future work in repository documentation
 - [ ] T143 Create GitHub Issue for next feature (likely Clusters feature per phased development approach)

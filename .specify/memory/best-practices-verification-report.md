@@ -222,7 +222,7 @@ All patterns from constitution documented in best practices:
 
 ### Step 7: Validate Specification Alignment ✅
 
-**Specification Review** (specs/001-quasar-project-setup/spec.md):
+**Specification Review** (.specify/specs/001-quasar-project-setup/spec.md):
 
 All user stories align with best practices document:
 
@@ -427,7 +427,7 @@ catalog:
 3. `.specify/memory/modular-architecture-checklist.md` - Validation tool
 4. `.specify/memory/modular-architecture-verification-report.md` - Audit report
 5. `.specify/memory/architecture-validation.md` - React comparison
-6. `specs/001-quasar-project-setup/architectural-patterns-comparison.md` - Detailed comparison
+6. `.specify/specs/001-quasar-project-setup/architectural-patterns-comparison.md` - Detailed comparison
 
 ### 4. Implementation Guidance
 

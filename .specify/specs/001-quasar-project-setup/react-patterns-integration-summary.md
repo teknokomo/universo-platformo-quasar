@@ -44,12 +44,12 @@ Created comprehensive categorization of patterns:
   - Added package optimization requirements
   - Expanded quality gates
   
-- `specs/001-quasar-project-setup/spec.md`
+- `.specify/specs/001-quasar-project-setup/spec.md`
   - Added 11 new functional requirements (FR-039 through FR-049)
   - Added 11 new success criteria (SC-031 through SC-041)
   - Enhanced assumptions with new patterns
   
-- `specs/001-quasar-project-setup/research.md`
+- `.specify/specs/001-quasar-project-setup/research.md`
   - Added Section 4a: Build Tooling for Library Packages
   - Added 7 new integration patterns
   - Enhanced technology summary table
@@ -371,13 +371,13 @@ These can be added in later phases:
 ## Files Changed
 
 ### Created
-- `specs/001-quasar-project-setup/architectural-patterns-comparison.md` (800+ lines)
-- `specs/001-quasar-project-setup/react-patterns-integration-summary.md` (this file)
+- `.specify/specs/001-quasar-project-setup/architectural-patterns-comparison.md` (800+ lines)
+- `.specify/specs/001-quasar-project-setup/react-patterns-integration-summary.md` (this file)
 
 ### Modified
 - `.specify/memory/constitution.md` (v1.2.0 → v1.3.0)
-- `specs/001-quasar-project-setup/spec.md` (+11 FRs, +11 SCs)
-- `specs/001-quasar-project-setup/research.md` (+5 sections, ~300 lines)
+- `.specify/specs/001-quasar-project-setup/spec.md` (+11 FRs, +11 SCs)
+- `.specify/specs/001-quasar-project-setup/research.md` (+5 sections, ~300 lines)
 
 ## Statistics
 

@@ -269,4 +269,4 @@ Add note:
 ### Existing Documentation
 - universo-platformo-react (reference implementation)
 - .specify/memory/constitution.md
-- specs/001-quasar-project-setup/research.md (existing)
+- .specify/specs/001-quasar-project-setup/research.md (existing)
