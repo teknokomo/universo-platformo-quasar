@@ -17,6 +17,27 @@
 
 This is a monorepo project with packages in `packages/` directory. All functional code goes in packages, root contains only configuration.
 
+## Scope of This Tasks File
+
+**Feature 001**: Repository Setup and Shared Infrastructure ONLY
+
+This tasks.md covers the foundational repository setup that enables all future feature development:
+- Repository configuration and tooling
+- PNPM workspace with catalog
+- Turborepo build orchestration
+- Shared infrastructure packages (@universo/types, utils, i18n, api-client)
+- Code quality tools and documentation framework
+- Testing infrastructure
+
+**NOT Included** (separate feature specifications required):
+- Authentication/authorization functionality
+- Uniks, Metaverses, Clusters entities
+- Spaces/Canvases with node systems
+- LangChain or UPDL node libraries
+- Publishing system
+
+See "Future Features Roadmap" section at the end of this document for planned features.
+
 ---
 
 ## Phase 1: Setup (Shared Infrastructure)
@@ -493,3 +514,175 @@ All 40 Success Criteria should be met upon completion of Phase 8.
 **Parallel Opportunities**: ~50-60% of tasks can run in parallel with proper team coordination
 **MVP Scope**: Phases 1-4 (User Stories 1-2) = 53 tasks = Functional monorepo with documentation
 **Recommended First Delivery**: Phases 1-5 (User Stories 1-3) = 99 tasks = Monorepo + Shared Infrastructure
+
+---
+
+## Future Features Roadmap
+
+**Important**: This tasks.md covers ONLY feature 001 (repository setup and shared infrastructure). The complete Universo Platformo functionality will be implemented through subsequent feature specifications, each with its own tasks.md file.
+
+### Planned Feature Sequence
+
+The following features will be implemented in separate specifications, following the modular package architecture established in feature 001:
+
+#### Feature 002: Authentication & Authorization (Priority: CRITICAL)
+**Packages**: `@universo/auth-frt`, `@universo/auth-srv`
+- User registration and login pages (Quasar UI)
+- Passport.js + Supabase authentication backend
+- Session management and JWT tokens
+- Protected routes and authentication guards
+- User profile management
+- Password reset and email verification
+
+#### Feature 003: Clusters Management (Priority: HIGH)
+**Packages**: `@universo/clusters-frt`, `@universo/clusters-srv`
+**Pattern**: Three-entity hierarchy (Clusters → Domains → Resources)
+- Cluster CRUD operations
+- Domain management within clusters
+- Resource management within domains
+- TypeORM entities and migrations
+- RESTful API endpoints
+- This establishes the base pattern for other hierarchical features
+
+#### Feature 004: Uniks (Unique Characters) (Priority: HIGH)
+**Packages**: `@universo/uniks-frt`, `@universo/uniks-srv`
+- Unik character creation and management
+- Character properties and attributes
+- Character relationships and hierarchies
+- Integration with other entities
+
+#### Feature 005: Metaverses (Priority: HIGH)
+**Packages**: `@universo/metaverses-frt`, `@universo/metaverses-srv`
+**Pattern**: Similar to Clusters (Metaverses → Sections → Entities)
+- Metaverse CRUD operations
+- Section management
+- Entity management within sections
+- Reuses patterns from Clusters feature
+
+#### Feature 006: Spaces/Canvases Foundation (Priority: MEDIUM)
+**Packages**: `@universo/spaces-frt`, `@universo/spaces-srv`
+- Workspace/canvas creation and management
+- Canvas layout and basic interactions
+- Foundation for node-based systems
+- Visual editor UI components (Quasar + canvas libraries)
+
+#### Feature 007: Node System Infrastructure (Priority: MEDIUM)
+**Packages**: `@universo/node-engine`, `@universo/node-ui`
+- Base node graph engine
+- Node creation, connection, and execution
+- Visual node editor integration with Spaces
+- Node serialization and persistence
+- Event system for node interactions
+
+#### Feature 008: LangChain Nodes Library (Priority: MEDIUM)
+**Packages**: `@universo/langchain-nodes-frt`, `@universo/langchain-nodes-srv`
+**Reference**: Similar to React version's flowise-components but optimized modular structure
+- LangChain integration nodes
+- LLM provider nodes (OpenAI, Anthropic, etc.)
+- Chain composition nodes
+- Vector store nodes
+- Embedding nodes
+- Agent nodes
+- Tool nodes
+- Document loader nodes
+
+#### Feature 009: UPDL Nodes Library (Priority: MEDIUM)
+**Packages**: `@universo/updl-nodes-frt`, `@universo/updl-nodes-srv`
+**Reference**: Based on React version's packages/updl/base
+- UPDL protocol node implementations
+- Data transformation nodes
+- Integration nodes with Uniks and Metaverses
+- Custom UPDL node types
+
+#### Feature 010: Additional Node Libraries (Priority: LOW)
+**Packages**: Various `@universo/*-nodes` packages
+- Custom business logic nodes
+- Integration nodes for external services
+- Utility and helper nodes
+- Community-contributed node libraries
+
+#### Feature 011: Application Publishing System (Priority: LOW)
+**Packages**: `@universo/publisher-frt`, `@universo/publisher-srv`
+- Canvas/workflow export functionality
+- Standalone application generation
+- Deployment configurations
+- Version management
+- Access control and permissions
+
+#### Feature 012: Marketplace & Sharing (Priority: LOW)
+**Packages**: `@universo/marketplace-frt`, `@universo/marketplace-srv`
+- Template sharing platform
+- Node library marketplace
+- User-contributed content
+- Rating and review system
+
+### Architecture Principles for All Features
+
+All future features MUST follow these principles established in feature 001:
+
+1. **Modular Package Structure**:
+   - Frontend: `@universo/{feature}-frt` with Quasar components
+   - Backend: `@universo/{feature}-srv` with NestJS services
+   - Each package in `packages/{feature}-{frt|srv}/base/`
+
+2. **Shared Infrastructure Usage**:
+   - Use `@universo/types` for shared TypeScript types
+   - Use `@universo/utils` for common utilities
+   - Use `@universo/i18n` for internationalization
+   - Use `@universo/api-client` for API communication
+
+3. **Quality Standards**:
+   - Bilingual documentation (EN/RU)
+   - TypeScript strict mode
+   - Comprehensive tests (unit + integration)
+   - ESLint and Prettier compliance
+   - Git hooks validation
+
+4. **React Reference with Caution**:
+   - Monitor https://github.com/teknokomo/universo-platformo-react for proven features
+   - **AVOID** porting Flowise legacy code (monolithic structure)
+   - Adapt patterns to Quasar/NestJS best practices
+   - Create optimal modular structure from the start
+
+### Development Workflow for Each Feature
+
+1. Create GitHub Issue for the feature
+2. Create feature specification (`.specify/specs/{###-feature-name}/`)
+   - `spec.md` - User stories and requirements
+   - `plan.md` - Technical approach
+   - `research.md` - Technology decisions
+   - `data-model.md` - Entities and relationships
+   - `contracts/` - API contracts
+   - `tasks.md` - Implementation tasks
+3. Implement following the tasks
+4. Create separate frontend and backend packages
+5. Write comprehensive tests
+6. Document in bilingual README files
+7. Integration with existing features
+8. Code review and quality checks
+9. Merge and deploy
+
+### Estimated Timeline
+
+- Feature 002 (Auth): 2-3 weeks
+- Feature 003 (Clusters): 2-3 weeks
+- Feature 004 (Uniks): 2-3 weeks
+- Feature 005 (Metaverses): 2 weeks (pattern reuse)
+- Feature 006 (Spaces): 3-4 weeks
+- Feature 007 (Node System): 4-5 weeks
+- Feature 008 (LangChain Nodes): 4-6 weeks
+- Feature 009 (UPDL Nodes): 3-4 weeks
+- Feature 010 (Additional Nodes): Ongoing
+- Feature 011 (Publishing): 3-4 weeks
+- Feature 012 (Marketplace): 4-5 weeks
+
+**Total Estimated Development**: ~6-9 months for core features (002-009)
+
+### Next Steps After Feature 001
+
+1. Complete all 144 tasks in this file (feature 001)
+2. Validate repository setup is fully functional
+3. Create GitHub Issue for Feature 002 (Authentication)
+4. Begin specification process for Authentication feature
+5. Implement authentication following the modular patterns
+6. Continue sequentially through features 003-012
