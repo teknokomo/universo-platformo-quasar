@@ -640,6 +640,7 @@ All future features MUST follow these principles established in feature 001:
 
 4. **React Reference with Caution**:
    - Monitor https://github.com/teknokomo/universo-platformo-react for proven features
+   - ⚠️ **SECURITY NOTE**: Always review and verify external code before adoption. Consider maintaining a local fork for reference.
    - **AVOID** porting Flowise legacy code (monolithic structure)
    - Adapt patterns to Quasar/NestJS best practices
    - Create optimal modular structure from the start
@@ -664,6 +665,8 @@ All future features MUST follow these principles established in feature 001:
 
 ### Estimated Timeline
 
+**Assumptions**: Estimates based on 1-2 experienced full-stack developers with Quasar/NestJS knowledge. Actual timelines may vary based on team size, experience level, feature complexity, and external dependencies.
+
 - Feature 002 (Auth): 2-3 weeks
 - Feature 003 (Clusters): 2-3 weeks
 - Feature 004 (Uniks): 2-3 weeks
@@ -677,6 +680,8 @@ All future features MUST follow these principles established in feature 001:
 - Feature 012 (Marketplace): 4-5 weeks
 
 **Total Estimated Development**: ~6-9 months for core features (002-009)
+
+**Note**: These are planning estimates. Each feature's actual implementation time should be re-evaluated during its specification phase based on detailed requirements and available resources.
 
 ### Next Steps After Feature 001
 
