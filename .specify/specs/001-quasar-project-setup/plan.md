@@ -1,7 +1,7 @@
 # Implementation Plan: Universo Platformo Quasar Project Setup
 
 **Branch**: `001-quasar-project-setup` | **Date**: 2025-11-17 | **Spec**: [spec.md](spec.md)
-**Input**: Feature specification from `/specs/001-quasar-project-setup/spec.md`
+**Input**: Feature specification from `/.specify/specs/001-quasar-project-setup/spec.md`
 
 **Note**: This plan follows the planning workflow defined in agent instructions.
 
@@ -118,7 +118,7 @@ All constitutional principles remain satisfied after design phase completion. Th
 ### Documentation (this feature)
 
 ```text
-specs/001-quasar-project-setup/
+.specify/specs/001-quasar-project-setup/
 ├── plan.md              # This file (implementation plan)
 ├── research.md          # Phase 0 output (technology research and decisions)
 ├── data-model.md        # Phase 1 output (key entities and relationships)

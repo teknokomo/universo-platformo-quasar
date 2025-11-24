@@ -219,7 +219,7 @@ All functionality MUST be organized in a monorepo using PNPM workspace managemen
 - ❌ Git configuration: `.gitignore`, `.gitattributes`
 - ❌ Documentation: Root `README.md`, `README-RU.md`, `LICENSE`, `SECURITY.md`
 - ❌ Development tools: `docker/`, `tools/` (utility scripts)
-- ❌ Specification documents: `specs/`, `.specify/`
+- ❌ Specification framework: `.specify/` (including memory, scripts, specs, templates)
 
 **Package Naming Convention** (from reference implementation):
 ```

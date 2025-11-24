@@ -169,7 +169,11 @@ universo-platformo-quasar/
 │   ├── metaverses-frt/base/# @universo/metaverses-frt - Metaverses frontend
 │   └── metaverses-srv/base/# @universo/metaverses-srv - Metaverses backend
 │
-├── specs/                  # Feature specifications
+├── .specify/               # Specification framework
+│   ├── memory/            # Project memory and constitution
+│   ├── scripts/           # Workflow automation scripts
+│   ├── specs/             # Feature specifications
+│   └── templates/         # Document templates
 ├── tools/                  # Utility scripts (no business logic)
 │   ├── docs/              # Documentation validation
 │   └── testing/           # Testing utilities
@@ -604,7 +608,7 @@ docker-compose up
 After completing this quickstart:
 
 1. **Read the Constitution**: Understand project principles (`.specify/memory/constitution.md`)
-2. **Review Specifications**: Check `specs/` directory for implemented features
+2. **Review Specifications**: Check `.specify/specs/` directory for implemented features
 3. **Explore Packages**: Look at existing packages in `packages/` for examples
 4. **Create Your First Issue**: Follow `.github/instructions/github-issues.md`
 5. **Make Your First Contribution**: Follow the git workflow and PR guidelines
@@ -612,7 +616,7 @@ After completing this quickstart:
 ## Getting Help
 
 - Check existing documentation in `.github/instructions/`
-- Review the specification for current feature (`specs/001-quasar-project-setup/`)
+- Review the specification for current feature (`.specify/specs/001-quasar-project-setup/`)
 - Create a GitHub Issue with the `question` label
 - Refer to the React implementation for conceptual guidance (not code copying)
 
@@ -620,4 +624,4 @@ After completing this quickstart:
 
 **Welcome to Universo Platformo Quasar!** 🚀
 
-This quickstart should have you up and running. For detailed information on specific features, refer to their specification documents in the `specs/` directory.
+This quickstart should have you up and running. For detailed information on specific features, refer to their specification documents in the `.specify/specs/` directory.

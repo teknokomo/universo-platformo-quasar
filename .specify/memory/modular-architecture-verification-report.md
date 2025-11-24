@@ -30,7 +30,7 @@ The Universo Platformo Quasar project documentation has been thoroughly reviewed
 **Critical Quote**:
 > "⚠️ CRITICAL WARNING: ALL functionality (except root configuration and build files) MUST be implemented as workspace packages in the packages/ directory. Implementing functionality outside of packages/ violates the core architectural principle and prevents future migration to separate repositories. This is NON-NEGOTIABLE."
 
-### 2. Specification (specs/001-quasar-project-setup/spec.md)
+### 2. Specification (.specify/specs/001-quasar-project-setup/spec.md)
 
 **Status**: ✅ ENHANCED
 
@@ -47,7 +47,7 @@ in the packages/ directory. Examples: clusters-frt, clusters-srv,
 spaces-frt, spaces-srv, @universo/types, @universo/utils.
 ```
 
-### 3. Implementation Plan (specs/001-quasar-project-setup/plan.md)
+### 3. Implementation Plan (.specify/specs/001-quasar-project-setup/plan.md)
 
 **Status**: ✅ UPDATED
 
@@ -60,7 +60,7 @@ spaces-frt, spaces-srv, @universo/types, @universo/utils.
 - Principle I now references FR-000 (CRITICAL) as primary evidence
 - Notes constitution v1.4.0 enhancements
 
-### 4. Quickstart Guide (specs/001-quasar-project-setup/quickstart.md)
+### 4. Quickstart Guide (.specify/specs/001-quasar-project-setup/quickstart.md)
 
 **Status**: ✅ ENHANCED
 

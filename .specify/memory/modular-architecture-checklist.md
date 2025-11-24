@@ -119,8 +119,7 @@ packages/clusters/      # Combined frontend/backend - VIOLATES SEPARATION
 - [ ] **Development tools**
   - `docker/` (containerization)
   - `tools/` (utility scripts only, no business logic)
-  - `.specify/` (specification documents)
-  - `specs/` (feature specifications)
+  - `.specify/` (specification framework: memory, scripts, specs, templates)
 
 ### NOT Allowed in Root
 

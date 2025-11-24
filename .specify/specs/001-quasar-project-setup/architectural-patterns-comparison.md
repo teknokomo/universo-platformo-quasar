@@ -910,7 +910,7 @@ All adaptations must maintain Quasar/NestJS best practices while learning from R
 
 - React Repository: https://github.com/teknokomo/universo-platformo-react
 - Constitution: `.specify/memory/constitution.md`
-- Specification: `specs/001-quasar-project-setup/spec.md`
-- Current Plan: `specs/001-quasar-project-setup/plan.md`
-- Research: `specs/001-quasar-project-setup/research.md`
-- Data Model: `specs/001-quasar-project-setup/data-model.md`
+- Specification: `.specify/specs/001-quasar-project-setup/spec.md`
+- Current Plan: `.specify/specs/001-quasar-project-setup/plan.md`
+- Research: `.specify/specs/001-quasar-project-setup/research.md`
+- Data Model: `.specify/specs/001-quasar-project-setup/data-model.md`
