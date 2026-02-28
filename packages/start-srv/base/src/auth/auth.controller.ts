@@ -156,13 +156,19 @@ export class AuthController {
             throw new UnauthorizedException('No refresh token')
         }
 
-        const { accessToken, refreshToken: newRefreshToken, expiresIn } =
-            await this.supabaseService.refreshSession(refreshToken)
+        try {
+            const { accessToken, refreshToken: newRefreshToken, expiresIn } =
+                await this.supabaseService.refreshSession(refreshToken)
 
-        setAccessCookie(reply, accessToken, expiresIn)
-        setRefreshCookie(reply, newRefreshToken)
+            setAccessCookie(reply, accessToken, expiresIn)
+            setRefreshCookie(reply, newRefreshToken)
 
-        return { success: true }
+            return { success: true }
+        } catch {
+            reply.clearCookie(ACCESS_TOKEN_COOKIE, { path: '/' })
+            reply.clearCookie(REFRESH_TOKEN_COOKIE, { path: '/' })
+            throw new UnauthorizedException('Session expired, please sign in again')
+        }
     }
 
     /**

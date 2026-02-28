@@ -7,11 +7,12 @@
  *   sb_access_token  — short-lived JWT (matches Supabase JWT expiry, typically 1 hour)
  *   sb_refresh_token — long-lived token (7 days) for issuing new access tokens
  *
- * axios `withCredentials: true` ensures both cookies are sent on every request.
- * An axios response interceptor transparently refreshes the access token on 401.
+ * Uses the shared apiClient which sends cookies automatically and transparently
+ * refreshes the access token on 401.
  */
-import { ref, computed } from 'vue'
-import axios, { type AxiosError } from 'axios'
+import { ref, computed, watch } from 'vue'
+import type { AxiosError } from 'axios'
+import apiClient, { sessionExpired } from './apiClient'
 
 export interface AuthUser {
     id: string
@@ -19,53 +20,21 @@ export interface AuthUser {
     role?: string
 }
 
-// Shared API client — withCredentials sends the HTTP-only session cookies automatically
-const authApi = axios.create({
-    baseURL: '/api/v1',
-    withCredentials: true,
-    headers: { 'Content-Type': 'application/json' }
-})
-
 // Shared reactive state (module-level singleton)
 const user = ref<AuthUser | null>(null)
 const loading = ref(true)
 const error = ref<string | null>(null)
 
-/** Whether a token refresh is currently in progress (prevents recursive refresh loops) */
-let isRefreshing = false
-
-/**
- * Attach a response interceptor that automatically attempts to refresh the
- * access token when a 401 is received, then retries the original request.
- * If the refresh also fails, the user is logged out (user.value = null).
- */
-authApi.interceptors.response.use(
-    (response) => response,
-    async (err: AxiosError) => {
-        const originalRequest = err.config as any
-        const is401 = err.response?.status === 401
-        const isRefreshEndpoint = originalRequest?.url?.includes('/auth/refresh')
-        const isLoginEndpoint = originalRequest?.url?.includes('/auth/login')
-
-        if (is401 && !isRefreshing && !originalRequest?._retried && !isRefreshEndpoint && !isLoginEndpoint) {
-            originalRequest._retried = true
-            isRefreshing = true
-            try {
-                await authApi.post('/auth/refresh')
-                isRefreshing = false
-                return authApi(originalRequest)
-            } catch {
-                isRefreshing = false
-                user.value = null
-            }
-        }
-
-        return Promise.reject(err)
+// When the shared apiClient signals a session expiry (refresh failed), clear user
+watch(sessionExpired, (expired) => {
+    if (expired) {
+        user.value = null
+        sessionExpired.value = false
     }
-)
+})
 
 // Check auth state on module load by calling the backend
-authApi
+apiClient
     .get<{ user: AuthUser }>('/auth/me')
     .then(({ data }) => {
         user.value = data.user
@@ -92,7 +61,7 @@ export function useAuth() {
         error.value = null
         loading.value = true
         try {
-            const { data } = await authApi.post<{ user: AuthUser }>('/auth/login', { email, password })
+            const { data } = await apiClient.post<{ user: AuthUser }>('/auth/login', { email, password })
             user.value = data.user
         } catch (err) {
             error.value = mapAuthError(err as AxiosError)
@@ -110,7 +79,7 @@ export function useAuth() {
         error.value = null
         loading.value = true
         try {
-            const { data } = await authApi.post<{ emailConfirmation: boolean }>('/auth/register', { email, password })
+            const { data } = await apiClient.post<{ emailConfirmation: boolean }>('/auth/register', { email, password })
             return data
         } catch (err) {
             error.value = mapAuthError(err as AxiosError)
@@ -127,7 +96,7 @@ export function useAuth() {
     const signOut = async (): Promise<void> => {
         error.value = null
         try {
-            await authApi.post('/auth/logout')
+            await apiClient.post('/auth/logout')
         } finally {
             user.value = null
         }

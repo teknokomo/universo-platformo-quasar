@@ -38,10 +38,13 @@ NestJS Backend (start-srv)
 Supabase Auth / PostgreSQL
 ```
 
-**Session management** uses an HTTP-only cookie (`sb_access_token`) set by the backend after
-successful login. The cookie is sent automatically with every request (`withCredentials: true`).
-The backend validates the Supabase JWT locally using `SUPABASE_JWT_SECRET` — no extra
-round-trip to Supabase on every request.
+**Session management** uses two HTTP-only cookies set by the backend after successful login:
+a short-lived access token cookie (`sb_access_token`) and a longer-lived refresh token cookie
+(`sb_refresh_token`). The access token cookie is sent automatically with every request
+(`withCredentials: true`) and is validated locally using `SUPABASE_JWT_SECRET` — no extra
+round-trip to Supabase on every request. When the access token expires, the frontend interceptor
+calls `/auth/refresh`, and the backend uses the refresh token cookie to obtain a new access token
+and rotate both cookies, without ever exposing tokens to frontend JavaScript.
 
 ---
 
@@ -97,7 +100,8 @@ All endpoints are prefixed with `/api/v1`.
 |--------|------|-------------|
 | `POST` | `/auth/login` | Sign in; sets `sb_access_token` HTTP-only cookie |
 | `POST` | `/auth/register` | Register new user |
-| `POST` | `/auth/logout` | Clear session cookie |
+| `POST` | `/auth/logout` | Clear session cookies |
+| `POST` | `/auth/refresh` | Refresh access token using refresh cookie |
 
 ### Auth (authentication required)
 

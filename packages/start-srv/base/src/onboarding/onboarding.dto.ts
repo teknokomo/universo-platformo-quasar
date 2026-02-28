@@ -13,19 +13,19 @@ export class JoinItemsDto {
     @IsArray()
     @IsUUID('4', { each: true })
     @ArrayMaxSize(MAX_IDS_PER_CATEGORY)
-    @Transform(({ value }: { value: string[] }) => [...new Set<string>(value)])
+    @Transform(({ value }) => Array.isArray(value) ? [...new Set<string>(value)] : value)
     projectIds!: string[]
 
     @IsArray()
     @IsUUID('4', { each: true })
     @ArrayMaxSize(MAX_IDS_PER_CATEGORY)
-    @Transform(({ value }: { value: string[] }) => [...new Set<string>(value)])
+    @Transform(({ value }) => Array.isArray(value) ? [...new Set<string>(value)] : value)
     campaignIds!: string[]
 
     @IsArray()
     @IsUUID('4', { each: true })
     @ArrayMaxSize(MAX_IDS_PER_CATEGORY)
-    @Transform(({ value }: { value: string[] }) => [...new Set<string>(value)])
+    @Transform(({ value }) => Array.isArray(value) ? [...new Set<string>(value)] : value)
     clusterIds!: string[]
 }
 

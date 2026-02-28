@@ -1,11 +1,11 @@
 /**
  * useOnboarding composable
  * Manages onboarding state and API calls for authenticated users.
- * Authentication is handled via the HTTP-only session cookie set by the backend.
- * axios `withCredentials: true` ensures the cookie is included automatically.
+ * Uses the shared apiClient which handles HTTP-only session cookies and
+ * automatically refreshes the access token on 401.
  */
 import { ref } from 'vue'
-import axios from 'axios'
+import apiClient from './apiClient'
 
 export interface OnboardingItem {
     id: string
@@ -26,13 +26,6 @@ export interface JoinItemsRequest {
     campaignIds: string[]
     clusterIds: string[]
 }
-
-// Shared API client — the session cookie is sent automatically via withCredentials
-const apiClient = axios.create({
-    baseURL: '/api/v1',
-    withCredentials: true,
-    headers: { 'Content-Type': 'application/json' }
-})
 
 /**
  * Onboarding composable

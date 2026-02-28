@@ -8,7 +8,7 @@
 import { Controller, Get, Post, Body, UseGuards, Request } from '@nestjs/common'
 import { AuthGuard } from '../auth/auth.guard'
 import { OnboardingService } from './onboarding.service'
-import type { JoinItemsDto } from './onboarding.dto'
+import { JoinItemsDto } from './onboarding.dto'
 
 interface AuthenticatedRequest {
     user: {
