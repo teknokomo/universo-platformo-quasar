@@ -11,11 +11,20 @@ export interface SignInResult {
     userId: string
     userEmail: string
     accessToken: string
+    refreshToken: string
+    /** Access token expiry in seconds (to align cookie maxAge) */
+    expiresIn: number
 }
 
 export interface SignUpResult {
     userId: string | null
     emailConfirmation: boolean
+}
+
+export interface RefreshResult {
+    accessToken: string
+    refreshToken: string
+    expiresIn: number
 }
 
 @Injectable()
@@ -37,7 +46,8 @@ export class SupabaseService {
     }
 
     /**
-     * Authenticate user with email and password via Supabase
+     * Authenticate user with email and password via Supabase.
+     * Returns both the short-lived access token and the long-lived refresh token.
      */
     async signIn(email: string, password: string): Promise<SignInResult> {
         const { data, error } = await this.client.auth.signInWithPassword({ email, password })
@@ -47,12 +57,14 @@ export class SupabaseService {
         return {
             userId: data.user.id,
             userEmail: data.user.email ?? '',
-            accessToken: data.session.access_token
+            accessToken: data.session.access_token,
+            refreshToken: data.session.refresh_token,
+            expiresIn: data.session.expires_in ?? 3600
         }
     }
 
     /**
-     * Register a new user via Supabase
+     * Register a new user via Supabase.
      */
     async signUp(email: string, password: string): Promise<SignUpResult> {
         const { data, error } = await this.client.auth.signUp({ email, password })
@@ -63,6 +75,22 @@ export class SupabaseService {
             userId: data.user?.id ?? null,
             // When session is null, Supabase requires email confirmation
             emailConfirmation: !data.session
+        }
+    }
+
+    /**
+     * Exchange a refresh token for a new access token.
+     * Called by the /auth/refresh endpoint when the access token has expired.
+     */
+    async refreshSession(refreshToken: string): Promise<RefreshResult> {
+        const { data, error } = await this.client.auth.refreshSession({ refresh_token: refreshToken })
+        if (error || !data.session) {
+            throw new UnauthorizedException(error?.message ?? 'Session expired, please sign in again')
+        }
+        return {
+            accessToken: data.session.access_token,
+            refreshToken: data.session.refresh_token,
+            expiresIn: data.session.expires_in ?? 3600
         }
     }
 }

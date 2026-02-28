@@ -1,10 +1,9 @@
 <!--
- * AuthPage - Supabase authentication page
+ * AuthPage - Authentication page
  *
- * Handles user login and registration via Supabase.
- * Redirects to the start page after successful authentication.
- *
- * Equivalent of AuthPage.tsx from @universo/auth-frontend
+ * Handles user login and registration via the NestJS backend.
+ * Redirects to the start page after successful sign-in.
+ * Shows email confirmation notice after successful sign-up.
 -->
 <template>
     <div class="auth-page flex flex-center" style="min-height: 100vh">
@@ -58,6 +57,11 @@
                     {{ t(authError) }}
                 </q-banner>
 
+                <!-- Email confirmation notice -->
+                <q-banner v-if="emailConfirmationSent" dense rounded class="bg-positive text-white q-mb-md">
+                    {{ t('auth.emailConfirmationSent') }}
+                </q-banner>
+
                 <!-- Sign in / Sign up button -->
                 <q-btn
                     type="submit"
@@ -103,6 +107,7 @@ export default defineComponent({
         const isSignUp = ref(false)
         const emailError = ref('')
         const passwordError = ref('')
+        const emailConfirmationSent = ref(false)
 
         const validateForm = (): boolean => {
             emailError.value = ''
@@ -133,7 +138,12 @@ export default defineComponent({
 
             try {
                 if (isSignUp.value) {
-                    await signUp(email.value, password.value)
+                    const result = await signUp(email.value, password.value)
+                    if (result.emailConfirmation) {
+                        emailConfirmationSent.value = true
+                    } else {
+                        await router.push('/')
+                    }
                 } else {
                     await signIn(email.value, password.value)
                     await router.push('/')
@@ -153,6 +163,7 @@ export default defineComponent({
             authError,
             emailError,
             passwordError,
+            emailConfirmationSent,
             handleSubmit
         }
     }

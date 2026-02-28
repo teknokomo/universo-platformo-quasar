@@ -3,6 +3,7 @@
  * Universo Platformo - Start Backend
  */
 import { NestFactory } from '@nestjs/core'
+import { ValidationPipe } from '@nestjs/common'
 import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fastify'
 import fastifyCookie from '@fastify/cookie'
 import { AppModule } from './app.module'
@@ -14,6 +15,19 @@ async function bootstrap() {
 
     // Register cookie plugin so HTTP-only session cookies can be set and read
     await app.register(fastifyCookie as any)
+
+    // Validate and transform all incoming request bodies using class-validator.
+    // whitelist: strip unknown properties; forbidNonWhitelisted: reject them.
+    // enableImplicitConversion: false — requires explicit types in DTOs; query
+    // params that arrive as strings must use @Type(() => Number) if needed.
+    app.useGlobalPipes(
+        new ValidationPipe({
+            whitelist: true,
+            forbidNonWhitelisted: true,
+            transform: true,
+            transformOptions: { enableImplicitConversion: false }
+        })
+    )
 
     // Global prefix for all API routes
     app.setGlobalPrefix('api/v1')

@@ -36,6 +36,7 @@ export default {
         signUpButton: 'Sign up',
         signUpLink: "Don't have an account? Sign up",
         signInLink: 'Already have an account? Sign in',
+        emailConfirmationSent: 'Registration successful! Please check your email to confirm your account.',
         validation: {
             emailRequired: 'Email is required',
             emailInvalid: 'Please enter a valid email',

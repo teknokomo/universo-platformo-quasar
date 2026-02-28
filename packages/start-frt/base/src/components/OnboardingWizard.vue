@@ -45,6 +45,7 @@
                                     :val="project.id"
                                     color="primary"
                                     class="q-mr-sm"
+                                    @click.stop
                                 />
                                 <div>
                                     <div class="text-subtitle2 text-weight-bold">{{ project.name }}</div>
@@ -79,6 +80,7 @@
                                     :val="campaign.id"
                                     color="primary"
                                     class="q-mr-sm"
+                                    @click.stop
                                 />
                                 <div>
                                     <div class="text-subtitle2 text-weight-bold">{{ campaign.name }}</div>
@@ -113,6 +115,7 @@
                                     :val="cluster.id"
                                     color="primary"
                                     class="q-mr-sm"
+                                    @click.stop
                                 />
                                 <div>
                                     <div class="text-subtitle2 text-weight-bold">{{ cluster.name }}</div>

@@ -13,8 +13,8 @@
     <div class="testimonials-section q-pa-md">
         <div class="row q-col-gutter-md justify-center">
             <div
-                v-for="(product, index) in products"
-                :key="index"
+                v-for="product in products"
+                :key="product.titleKey"
                 class="col-12 col-sm-6 col-md-3"
             >
                 <q-card bordered flat class="full-height">

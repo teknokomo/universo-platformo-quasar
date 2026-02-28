@@ -3,8 +3,12 @@
  * Manages authentication state by communicating with the NestJS backend.
  * The frontend has NO direct Supabase access — all auth flows go through /api/v1/auth/*.
  *
- * Session is maintained via an HTTP-only cookie set by the backend.
- * axios `withCredentials: true` ensures the cookie is sent on every request.
+ * Session is maintained via two HTTP-only cookies set by the backend:
+ *   sb_access_token  — short-lived JWT (matches Supabase JWT expiry, typically 1 hour)
+ *   sb_refresh_token — long-lived token (7 days) for issuing new access tokens
+ *
+ * axios `withCredentials: true` ensures both cookies are sent on every request.
+ * An axios response interceptor transparently refreshes the access token on 401.
  */
 import { ref, computed } from 'vue'
 import axios, { type AxiosError } from 'axios'
@@ -15,7 +19,7 @@ export interface AuthUser {
     role?: string
 }
 
-// Shared API client — withCredentials sends the HTTP-only session cookie automatically
+// Shared API client — withCredentials sends the HTTP-only session cookies automatically
 const authApi = axios.create({
     baseURL: '/api/v1',
     withCredentials: true,
@@ -26,6 +30,39 @@ const authApi = axios.create({
 const user = ref<AuthUser | null>(null)
 const loading = ref(true)
 const error = ref<string | null>(null)
+
+/** Whether a token refresh is currently in progress (prevents recursive refresh loops) */
+let isRefreshing = false
+
+/**
+ * Attach a response interceptor that automatically attempts to refresh the
+ * access token when a 401 is received, then retries the original request.
+ * If the refresh also fails, the user is logged out (user.value = null).
+ */
+authApi.interceptors.response.use(
+    (response) => response,
+    async (err: AxiosError) => {
+        const originalRequest = err.config as any
+        const is401 = err.response?.status === 401
+        const isRefreshEndpoint = originalRequest?.url?.includes('/auth/refresh')
+        const isLoginEndpoint = originalRequest?.url?.includes('/auth/login')
+
+        if (is401 && !isRefreshing && !originalRequest?._retried && !isRefreshEndpoint && !isLoginEndpoint) {
+            originalRequest._retried = true
+            isRefreshing = true
+            try {
+                await authApi.post('/auth/refresh')
+                isRefreshing = false
+                return authApi(originalRequest)
+            } catch {
+                isRefreshing = false
+                user.value = null
+            }
+        }
+
+        return Promise.reject(err)
+    }
+)
 
 // Check auth state on module load by calling the backend
 authApi
@@ -49,7 +86,7 @@ export function useAuth() {
 
     /**
      * Sign in with email and password.
-     * Backend calls Supabase, sets HTTP-only cookie, returns user info.
+     * Backend calls Supabase, sets HTTP-only cookies, returns user info.
      */
     const signIn = async (email: string, password: string): Promise<void> => {
         error.value = null
@@ -85,7 +122,7 @@ export function useAuth() {
 
     /**
      * Sign out the current user.
-     * Backend clears the HTTP-only session cookie.
+     * Backend clears both HTTP-only session cookies.
      */
     const signOut = async (): Promise<void> => {
         error.value = null

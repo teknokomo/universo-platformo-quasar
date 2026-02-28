@@ -36,6 +36,7 @@ export default {
         signUpButton: 'Зарегистрироваться',
         signUpLink: 'Нет аккаунта? Зарегистрироваться',
         signInLink: 'Уже есть аккаунт? Войти',
+        emailConfirmationSent: 'Регистрация прошла успешно! Проверьте вашу почту для подтверждения аккаунта.',
         validation: {
             emailRequired: 'Email обязателен',
             emailInvalid: 'Пожалуйста, введите корректный email',
