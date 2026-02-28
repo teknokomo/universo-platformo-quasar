@@ -10,7 +10,6 @@
         "test": "vitest run"
     },
     "dependencies": {
-        "@supabase/supabase-js": "catalog:",
         "axios": "catalog:",
         "pinia": "catalog:",
         "quasar": "catalog:",

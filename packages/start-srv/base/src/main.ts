@@ -4,6 +4,7 @@
  */
 import { NestFactory } from '@nestjs/core'
 import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fastify'
+import fastifyCookie from '@fastify/cookie'
 import { AppModule } from './app.module'
 
 async function bootstrap() {
@@ -11,10 +12,13 @@ async function bootstrap() {
         logger: ['error', 'warn', 'log']
     })
 
+    // Register cookie plugin so HTTP-only session cookies can be set and read
+    await app.register(fastifyCookie as any)
+
     // Global prefix for all API routes
     app.setGlobalPrefix('api/v1')
 
-    // CORS configuration
+    // CORS configuration — allow credentials (cookies) from the frontend origin
     app.enableCors({
         origin: process.env.FRONTEND_URL || 'http://localhost:9000',
         credentials: true

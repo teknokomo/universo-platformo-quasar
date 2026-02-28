@@ -1,10 +1,11 @@
 /**
  * useOnboarding composable
- * Manages onboarding state and API calls for authenticated users
+ * Manages onboarding state and API calls for authenticated users.
+ * Authentication is handled via the HTTP-only session cookie set by the backend.
+ * axios `withCredentials: true` ensures the cookie is included automatically.
  */
 import { ref } from 'vue'
 import axios from 'axios'
-import { supabase } from '../boot/supabase'
 
 export interface OnboardingItem {
     id: string
@@ -26,26 +27,16 @@ export interface JoinItemsRequest {
     clusterIds: string[]
 }
 
+// Shared API client — the session cookie is sent automatically via withCredentials
 const apiClient = axios.create({
     baseURL: '/api/v1',
     withCredentials: true,
-    headers: {
-        'Content-Type': 'application/json'
-    }
-})
-
-// Add Supabase JWT token to requests
-apiClient.interceptors.request.use(async (config) => {
-    const { data } = await supabase.auth.getSession()
-    if (data.session?.access_token) {
-        config.headers['Authorization'] = `Bearer ${data.session.access_token}`
-    }
-    return config
+    headers: { 'Content-Type': 'application/json' }
 })
 
 /**
  * Onboarding composable
- * Fetches and manages onboarding data for authenticated users
+ * Fetches and manages onboarding data for authenticated users.
  */
 export function useOnboarding() {
     const items = ref<OnboardingItems | null>(null)

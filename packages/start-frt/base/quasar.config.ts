@@ -2,7 +2,7 @@ import { configure } from 'quasar/wrappers'
 
 export default configure(function (/* ctx */) {
     return {
-        boot: ['i18n', 'supabase'],
+        boot: ['i18n'],
 
         css: ['app.scss'],
 

@@ -1,27 +1,19 @@
 /**
  * Auth Module
- * Handles Supabase JWT authentication for the NestJS backend
+ * Handles Supabase authentication proxy for the NestJS backend.
+ * All auth operations (login, register, logout, session check) go through here.
  */
 import { Module } from '@nestjs/common'
 import { PassportModule } from '@nestjs/passport'
-import { JwtModule } from '@nestjs/jwt'
-import { ConfigModule, ConfigService } from '@nestjs/config'
 import { SupabaseStrategy } from './supabase.strategy'
+import { SupabaseService } from './supabase.service'
+import { AuthController } from './auth.controller'
 import { AuthGuard } from './auth.guard'
 
 @Module({
-    imports: [
-        PassportModule.register({ defaultStrategy: 'jwt' }),
-        JwtModule.registerAsync({
-            imports: [ConfigModule],
-            useFactory: async (configService: ConfigService) => ({
-                secret: configService.get<string>('SUPABASE_JWT_SECRET'),
-                signOptions: { expiresIn: '1h' }
-            }),
-            inject: [ConfigService]
-        })
-    ],
-    providers: [SupabaseStrategy, AuthGuard],
-    exports: [AuthGuard, PassportModule]
+    imports: [PassportModule.register({ defaultStrategy: 'jwt' })],
+    controllers: [AuthController],
+    providers: [SupabaseStrategy, SupabaseService, AuthGuard],
+    exports: [AuthGuard, PassportModule, SupabaseService]
 })
 export class AuthModule {}

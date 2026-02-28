@@ -1,94 +1,103 @@
 /**
  * useAuth composable
- * Provides Supabase authentication state and methods for Vue components
- * Equivalent of the React useAuth hook from @universo/auth-frontend
+ * Manages authentication state by communicating with the NestJS backend.
+ * The frontend has NO direct Supabase access — all auth flows go through /api/v1/auth/*.
+ *
+ * Session is maintained via an HTTP-only cookie set by the backend.
+ * axios `withCredentials: true` ensures the cookie is sent on every request.
  */
 import { ref, computed } from 'vue'
-import type { User, Session, AuthError } from '@supabase/supabase-js'
-import { supabase } from '../boot/supabase'
+import axios, { type AxiosError } from 'axios'
 
-const user = ref<User | null>(null)
-const session = ref<Session | null>(null)
+export interface AuthUser {
+    id: string
+    email: string
+    role?: string
+}
+
+// Shared API client — withCredentials sends the HTTP-only session cookie automatically
+const authApi = axios.create({
+    baseURL: '/api/v1',
+    withCredentials: true,
+    headers: { 'Content-Type': 'application/json' }
+})
+
+// Shared reactive state (module-level singleton)
+const user = ref<AuthUser | null>(null)
 const loading = ref(true)
 const error = ref<string | null>(null)
 
-// Initialize auth listener once at module level (singleton pattern)
-// This avoids multiple listeners and ensures auth state is shared across all components
-const { data: authListener } = supabase.auth.onAuthStateChange((_event, newSession) => {
-    session.value = newSession
-    user.value = newSession?.user ?? null
-    loading.value = false
-})
-
-// Initialize session immediately
-supabase.auth.getSession().then(({ data: sessionData, error: sessionError }) => {
-    if (sessionError) {
-        console.error('[useAuth] Failed to get session:', sessionError)
-        error.value = sessionError.message
-    } else {
-        session.value = sessionData.session
-        user.value = sessionData.session?.user ?? null
-    }
-    loading.value = false
-})
+// Check auth state on module load by calling the backend
+authApi
+    .get<{ user: AuthUser }>('/auth/me')
+    .then(({ data }) => {
+        user.value = data.user
+    })
+    .catch(() => {
+        user.value = null
+    })
+    .finally(() => {
+        loading.value = false
+    })
 
 /**
  * Authentication composable
- * Manages Supabase authentication state across the application
+ * All methods communicate exclusively with the NestJS backend.
  */
 export function useAuth() {
     const isAuthenticated = computed(() => !!user.value)
 
     /**
-     * Sign in with email and password
+     * Sign in with email and password.
+     * Backend calls Supabase, sets HTTP-only cookie, returns user info.
      */
     const signIn = async (email: string, password: string): Promise<void> => {
         error.value = null
         loading.value = true
         try {
-            const { error: authError } = await supabase.auth.signInWithPassword({ email, password })
-            if (authError) {
-                error.value = mapAuthError(authError)
-                throw authError
-            }
+            const { data } = await authApi.post<{ user: AuthUser }>('/auth/login', { email, password })
+            user.value = data.user
+        } catch (err) {
+            error.value = mapAuthError(err as AxiosError)
+            throw err
         } finally {
             loading.value = false
         }
     }
 
     /**
-     * Sign up with email and password
+     * Register a new account.
+     * Returns whether email confirmation is required.
      */
-    const signUp = async (email: string, password: string): Promise<void> => {
+    const signUp = async (email: string, password: string): Promise<{ emailConfirmation: boolean }> => {
         error.value = null
         loading.value = true
         try {
-            const { error: authError } = await supabase.auth.signUp({ email, password })
-            if (authError) {
-                error.value = mapAuthError(authError)
-                throw authError
-            }
+            const { data } = await authApi.post<{ emailConfirmation: boolean }>('/auth/register', { email, password })
+            return data
+        } catch (err) {
+            error.value = mapAuthError(err as AxiosError)
+            throw err
         } finally {
             loading.value = false
         }
     }
 
     /**
-     * Sign out the current user
+     * Sign out the current user.
+     * Backend clears the HTTP-only session cookie.
      */
     const signOut = async (): Promise<void> => {
         error.value = null
-        const { error: authError } = await supabase.auth.signOut()
-        if (authError) {
-            console.error('[useAuth] Sign out failed:', authError)
+        try {
+            await authApi.post('/auth/logout')
+        } finally {
+            user.value = null
         }
-        user.value = null
-        session.value = null
     }
 
     return {
         user,
-        session,
         loading,
         error,
         isAuthenticated,
@@ -98,17 +107,14 @@ export function useAuth() {
     }
 }
 
-// Export cleanup for app teardown if needed
-export const cleanupAuth = () => {
-    authListener.subscription.unsubscribe()
-}
-
 /**
- * Map Supabase auth errors to i18n translation keys
+ * Map backend error responses to i18n translation keys
  */
-function mapAuthError(authError: AuthError): string {
-    const message = authError.message?.toLowerCase() ?? ''
-    if (message.includes('invalid login credentials') || message.includes('invalid email or password')) {
+function mapAuthError(err: AxiosError<{ message?: string }>): string {
+    const status = err.response?.status
+    const message = (err.response?.data?.message ?? '').toLowerCase()
+
+    if (status === 401 || message.includes('invalid') || message.includes('credentials')) {
         return 'auth.errors.invalidCredentials'
     }
     if (message.includes('email not confirmed')) {
