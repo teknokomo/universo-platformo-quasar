@@ -32,8 +32,8 @@ Universo Platformo — единая платформа для знаний, пл
     │  GET  /api/v1/onboarding/items
     ▼
 NestJS Бэкенд (start-srv)
+    │  локальная валидация JWT (SUPABASE_JWT_SECRET)
     │  signInWithPassword(email, password)
-    │  getUser(accessToken)
     ▼
 Supabase Auth / PostgreSQL
 ```

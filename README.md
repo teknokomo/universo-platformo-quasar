@@ -32,8 +32,8 @@ Browser (Quasar)
     │  GET  /api/v1/onboarding/items
     ▼
 NestJS Backend (start-srv)
+    │  local JWT validation (SUPABASE_JWT_SECRET)
     │  signInWithPassword(email, password)
-    │  getUser(accessToken)
     ▼
 Supabase Auth / PostgreSQL
 ```
