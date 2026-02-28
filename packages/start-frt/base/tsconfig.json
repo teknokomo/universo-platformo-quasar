@@ -1,0 +1,11 @@
+{
+    "extends": "../../../tsconfig.json",
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["src/*"]
+        },
+        "types": ["quasar", "node"]
+    },
+    "include": ["src/**/*.ts", "src/**/*.vue", "src/**/*.d.ts"]
+}

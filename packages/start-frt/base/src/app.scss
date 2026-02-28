@@ -1,0 +1,21 @@
+/* Global SCSS styles for Universo Platformo Start Frontend */
+
+// Import Quasar variables
+@import 'quasar/src/css/variables.sass';
+
+// Custom variables
+$primary: #1565c0;
+$secondary: #424242;
+$accent: #0288d1;
+
+// Base styles
+html,
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+}

@@ -1,0 +1,30 @@
+{
+    "name": "universo-platformo-quasar",
+    "version": "0.0.1",
+    "private": true,
+    "description": "Universo Platformo implementation using Quasar/NestJS TypeScript monorepo",
+    "engines": {
+        "node": ">=18.15.0 <19.0.0 || ^20",
+        "pnpm": ">=9"
+    },
+    "packageManager": "pnpm@9.0.0",
+    "scripts": {
+        "build": "turbo run build",
+        "dev": "turbo run dev",
+        "lint": "turbo run lint",
+        "test": "turbo run test",
+        "clean": "turbo run clean"
+    },
+    "devDependencies": {
+        "turbo": "^2.0.0",
+        "typescript": "^5.3.0"
+    },
+    "prettier": {
+        "printWidth": 140,
+        "singleQuote": true,
+        "trailingComma": "none",
+        "tabWidth": 4,
+        "semi": false,
+        "endOfLine": "auto"
+    }
+}
